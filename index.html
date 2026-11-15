@@ -296,6 +296,31 @@
   .pad button { height: 72px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); font: 500 28px var(--f-num); color: var(--ink); touch-action: manipulation; }
   .pad button:active { background: var(--accent-soft); }
   .lock-forgot { border: 0; background: transparent; color: var(--accent); font-weight: 700; padding: 8px; }
+
+  /* Daily journal: mood faces, symptom toggles, 7-day grid */
+  .moods { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .moods button { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 8px 0; font: 26px/1.2 var(--f-emoji); min-height: 48px; touch-action: manipulation; }
+  .moods button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+  .moods button span { display: block; font: 500 11px var(--f-ui); color: var(--ink-2); }
+  .toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toggles button { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 12px; font-weight: 500; font-size: 14px; min-height: 38px; touch-action: manipulation; }
+  .toggles button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+  .jgrid { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+  .jgrid th, .jgrid td { padding: 5px 2px; text-align: center; border-top: 1px solid var(--line); }
+  .jgrid th:first-child, .jgrid td:first-child { text-align: start; width: 30%; font-weight: 500; color: var(--ink-2); }
+  .jgrid thead th { border-top: 0; font-weight: 500; color: var(--ink-2); }
+  .jgrid thead th.today { color: var(--accent); font-weight: 700; }
+  .jgrid .mood { font-family: var(--f-emoji); font-size: 16px; }
+  .jgrid i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+  .jgrid .off { color: var(--line); }
+
+  /* Doctor questions */
+  .q-answer { margin-top: 6px; padding: 8px 10px; border-radius: 12px; background: var(--leaf-soft); font-size: 14px; overflow-wrap: anywhere; }
+  .q-answer strong { color: var(--leaf); }
+  .q-form { display: flex; gap: 6px; margin-top: 8px; }
+  .q-form input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px 10px; min-height: 40px; }
+  .q-form button { border: 0; border-radius: 12px; padding: 8px 12px; background: var(--leaf); color: var(--surface); font-weight: 700; }
+  .linkish { border: 0; background: transparent; color: var(--accent); font-weight: 700; padding: 4px 0; }
 </style>
 <style>
   .tabs a svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -628,6 +653,9 @@ const blank = () => ({
   appts: [],           // { id, date, time, title, note }
   weights: [],         // { id, date, kg }
   bag: {},             // { itemId: true }
+  questions: [],       // { id, text, answer, createdAt, answeredAt }
+  journal: {},         // { 'YYYY-MM-DD': { mood: 1-5, sym: [ids] } }
+  backupAt: 0,         // when a backup file was last saved
   pin: null            // { salt, hash } when the app lock is on
 });
 
@@ -640,8 +668,8 @@ let state = blank();
 
 function normalise(obj) {
   const s = Object.assign(blank(), obj || {});
-  ['kicks', 'contractions', 'appts', 'weights'].forEach((k) => { if (!Array.isArray(s[k])) s[k] = []; });
-  if (!s.bag || typeof s.bag !== 'object') s.bag = {};
+  ['kicks', 'contractions', 'appts', 'weights', 'questions'].forEach((k) => { if (!Array.isArray(s[k])) s[k] = []; });
+  ['bag', 'journal'].forEach((k) => { if (!s[k] || typeof s[k] !== 'object' || Array.isArray(s[k])) s[k] = {}; });
   return s;
 }
 function loadLocal() {
@@ -658,6 +686,9 @@ function trim(s) {
   s.contractions = s.contractions.slice(-200);
   s.weights = s.weights.slice(-120);
   s.appts = s.appts.slice(-120);
+  s.questions = s.questions.slice(-200);
+  const days = Object.keys(s.journal).sort();
+  days.slice(0, Math.max(0, days.length - 320)).forEach((d) => { delete s.journal[d]; });
 }
 
 // ---------- account sync (private to the signed-in viewer) ----------
@@ -1127,6 +1158,8 @@ function viewToday(j) {
     </div>
   </section>
 
+  ${journalCard()}
+
   <section class="card" aria-labelledby="babyTitle">
     <div class="card-head"><h2 id="babyTitle">${babyTitle}</h2><span class="chip leaf">${plural(wk, WEEKS_W)}</span></div>
     ${babyBlock(w, Math.min(40.9, Math.max(4, j.weeks + j.days / 7)), wk)}
@@ -1148,7 +1181,12 @@ function viewToday(j) {
     <div class="card-head"><h2>موعدك الجاي</h2><a class="chip" href="#tracker">كل المواعيد</a></div>
     ${next ? `<ul class="list"><li>${dateBadge(next.date)}<div class="grow"><p class="title">${esc(next.title)}</p><p class="muted small">${fmtDayMonth(next.date)}${next.time ? ' · ' + fmtClock(next.time) : ''}</p></div></li></ul>`
       : '<p class="empty">ما عندك مواعيد جاية. أضيفيها من «متابعتي» عشان تطلع لك هنا.</p>'}
+    ${openQuestions().length ? `<button type="button" class="linkish" data-goto="questions">عندك ${plural(openQuestions().length, ['سؤال واحد', 'سؤالين', 'أسئلة', 'سؤال'])} للطبيبة ←</button>`
+      : '<button type="button" class="linkish" data-goto="questions">اكتبي أسئلتك للطبيبة ←</button>'}
   </section>
+
+  ${backupDue() ? `<section class="card"><p class="note"><strong>احفظي نسخة احتياطية.</strong> معلوماتك محفوظة في هالجوال بس، والنسخة تحميها لو انحذف التطبيق.</p>
+    <button type="button" class="btn ghost block" data-goto="backup">حفظ نسخة احتياطية</button></section>` : ''}
 
   <details class="card">
     <summary>متى تكلّمين الطبيبة أو تروحين الطوارئ فورًا؟</summary>
@@ -1366,8 +1404,8 @@ function contractionsView() {
 let trackerTab = 'appts';
 
 function viewTracker() {
-  return seg('tracker', trackerTab, [['appts', 'المواعيد'], ['weight', 'الوزن'], ['bag', 'الشنطة']]) +
-    (trackerTab === 'appts' ? apptsView() : trackerTab === 'weight' ? weightView() : viewBag());
+  return seg('tracker', trackerTab, [['appts', 'المواعيد'], ['questions', 'أسئلتي'], ['weight', 'الوزن'], ['bag', 'الشنطة']]) +
+    (trackerTab === 'appts' ? apptsView() : trackerTab === 'questions' ? questionsView() : trackerTab === 'weight' ? weightView() : viewBag());
 }
 
 function apptItem(a, past) {
@@ -1463,6 +1501,166 @@ function viewBag() {
       <label class="check${state.bag[id] ? ' done' : ''}"><input type="checkbox" id="bag-${id}" data-bag="${id}" ${state.bag[id] ? 'checked' : ''}><span>${label}</span></label>`).join('')}</div>
   </section>`).join('')}`;
 }
+// ---------- daily journal ----------
+const MOODS = [[5, '😄', 'ممتازة'], [4, '🙂', 'زينة'], [3, '😐', 'عادي'], [2, '😔', 'تعبانة'], [1, '😢', 'ضايقة']];
+const SYMPTOMS = [['nausea', 'غثيان'], ['vomit', 'ترجيع'], ['tired', 'تعب'], ['headache', 'صداع'], ['heartburn', 'حموضة'],
+  ['dizzy', 'دوخة'], ['constip', 'إمساك'], ['back', 'ألم ظهر'], ['sleep', 'أرق']];
+const dot = '<span class="off">·</span>';
+
+function journalCard() {
+  const day = todayISO();
+  const e = state.journal[day] || {};
+  const sym = e.sym || [];
+  const days = Array.from({ length: 7 }, (_, i) => addDays(day, i - 6));
+  const entry = (d) => state.journal[d] || {};
+  const used = SYMPTOMS.filter(([id]) => days.some((d) => (entry(d).sym || []).includes(id)));
+  const anyWeek = days.some((d) => state.journal[d]);
+  const grid = anyWeek ? `
+    <p class="eyebrow" style="margin-top:6px">آخر 7 أيام</p>
+    <div class="table-wrap"><table class="jgrid" aria-label="المزاج والأعراض في آخر 7 أيام">
+      <thead><tr><th></th>${days.map((d) => `<th class="num${d === day ? ' today' : ''}">${Number(d.slice(8))}</th>`).join('')}</tr></thead>
+      <tbody>
+        <tr><td>المزاج</td>${days.map((d) => { const m = MOODS.find((x) => x[0] === entry(d).mood); return `<td class="mood">${m ? `<span title="${m[2]}">${m[1]}</span>` : dot}</td>`; }).join('')}</tr>
+        ${used.map(([id, label]) => `<tr><td>${label}</td>${days.map((d) => `<td>${(entry(d).sym || []).includes(id) ? '<i title="نعم"></i>' : dot}</td>`).join('')}</tr>`).join('')}
+      </tbody>
+    </table></div>
+    <p class="muted small">تقدرين توريين هالجدول للطبيبة في الموعد.</p>` : '';
+  return `
+  <section class="card">
+    <div class="card-head"><h2>كيف حالك اليوم؟</h2><span class="chip">يومياتي</span></div>
+    <div class="moods" role="group" aria-label="المزاج">${MOODS.map(([v, face, label]) =>
+      `<button type="button" data-mood="${v}" aria-pressed="${e.mood === v}" aria-label="${label}">${face}<span>${label}</span></button>`).join('')}</div>
+    <p class="muted small">وش حاسة فيه اليوم؟ اضغطي على اللي ينطبق:</p>
+    <div class="toggles" role="group" aria-label="الأعراض">${SYMPTOMS.map(([id, label]) =>
+      `<button type="button" data-sym="${id}" aria-pressed="${sym.includes(id)}">${label}</button>`).join('')}</div>
+    ${sym.includes('vomit') ? '<p class="note">إذا الترجيع قوي، أو ما تقدرين تثبّتين الأكل والمويه، كلّمي طبيبتك.</p>' : ''}
+    ${grid}
+  </section>`;
+}
+
+function toggleJournal(field, value) {
+  commit((s) => {
+    const day = todayISO();
+    const e = Object.assign({ mood: 0, sym: [] }, s.journal[day]);
+    if (field === 'mood') e.mood = e.mood === value ? 0 : value;
+    else e.sym = e.sym.includes(value) ? e.sym.filter((x) => x !== value) : e.sym.concat(value);
+    if (!e.mood && !e.sym.length) delete s.journal[day]; else s.journal[day] = e;
+  });
+}
+
+// ---------- doctor questions ----------
+const openQuestions = () => state.questions.filter((q) => !q.answer);
+
+function questionsView() {
+  const open = openQuestions();
+  const answered = state.questions.filter((q) => q.answer).sort((a, b) => b.answeredAt.localeCompare(a.answeredAt));
+  const next = upcomingAppts()[0];
+  return `
+  <form class="card" id="qForm" novalidate>
+    <h2>سؤال للطبيبة</h2>
+    <p class="muted small">اكتبي أي سؤال يجي في بالك أول بأول، وفي الموعد افتحي هالقائمة عشان ما تنسين شي.</p>
+    <div class="field"><label for="qText">السؤال</label><input id="qText" maxlength="200" placeholder="مثلًا: هل أقدر أسافر بالطيارة؟" required></div>
+    <p class="error" id="qError" role="alert"></p>
+    <button type="submit" class="btn block">إضافة السؤال</button>
+  </form>
+  <section class="card">
+    <div class="card-head"><h2>أسئلة للموعد الجاي</h2><span class="chip num">${open.length}</span></div>
+    ${next ? `<p class="muted small">${esc(next.title)} · ${fmtDayMonth(next.date)}${next.time ? ' · ' + fmtClock(next.time) : ''}</p>` : ''}
+    ${open.length ? `<ul class="list">${open.map((q) => `
+      <li><div class="grow"><p class="title">${esc(q.text)}</p>
+        <form class="q-form" data-qform="${q.id}" novalidate><input aria-label="جواب الطبيبة" maxlength="300" placeholder="اكتبي جواب الطبيبة"><button type="submit">حفظ</button></form>
+      </div>${delBtn('questions', q.id)}</li>`).join('')}</ul>`
+      : '<p class="empty">ما فيه أسئلة. أضيفي أول سؤال فوق.</p>'}
+  </section>
+  ${answered.length ? `<details class="card"><summary>أسئلة انجاوبت (${answered.length})</summary><ul class="list">${answered.map((q) => `
+    <li><div class="grow"><p class="title">${esc(q.text)}</p><div class="q-answer"><strong>الطبيبة:</strong> ${esc(q.answer)}</div>
+      <p class="muted small">${fmtDate(q.answeredAt)}</p></div>${delBtn('questions', q.id)}</li>`).join('')}</ul></details>` : ''}`;
+}
+
+// ---------- backup ----------
+let restorePending = null;   // { data, savedAt } read from a chosen file, waiting for confirmation
+
+function hasData(s) {
+  return s.kicks.length + s.contractions.length + s.appts.length + s.weights.length + s.questions.length +
+    Object.keys(s.journal).length + Object.keys(s.bag).length > 0;
+}
+function backupDue() {
+  return hasData(state) && (!state.backupAt || Date.now() - state.backupAt > 30 * DAY);
+}
+
+function backupCard() {
+  return `
+    <section class="card" id="backupCard">
+      <h2>نسخة احتياطية</h2>
+      <p class="muted small">احفظي ملف فيه كل معلوماتك في تطبيق «الملفات» أو iCloud Drive. إذا انحذف التطبيق أو غيّرتي جوالك، ترجّعين كل شي من هالملف.</p>
+      <p class="small">${state.backupAt ? `آخر نسخة: ${fmtStamp(state.backupAt)}` : '<strong>ما سويتي نسخة احتياطية للحين.</strong>'}</p>
+      ${restorePending ? `
+      <p class="note warn"><strong>متأكدة؟</strong> النسخة محفوظة ${fmtStamp(restorePending.savedAt)}. الاسترجاع يبدّل كل المعلومات اللي الحين في التطبيق بمعلومات النسخة.</p>
+      <div class="row"><button type="button" class="btn danger" id="restoreYes">استرجاع</button><button type="button" class="btn ghost" id="restoreNo">إلغاء</button></div>` : `
+      <div class="row"><button type="button" class="btn" id="backupSave">حفظ نسخة</button><button type="button" class="btn ghost" id="backupPick">استرجاع من نسخة</button></div>`}
+      <input type="file" id="backupFile" accept=".json,application/json" hidden>
+      <p class="error" id="backupError" role="alert"></p>
+      <p class="muted small">الرمز السري ما ينحفظ في النسخة. بعد الاسترجاع تقدرين تفعّلين القفل من جديد.</p>
+    </section>`;
+}
+
+function markBackup() {
+  commit((s) => { s.backupAt = Date.now(); }, 'انحفظت النسخة الاحتياطية');
+  if (!$('#sheet').hidden) renderSheet();
+}
+
+function saveBackup() {
+  const data = JSON.parse(JSON.stringify(state));
+  delete data.pin;
+  const name = `abeer-backup-${todayISO()}.json`;
+  const blob = new Blob([JSON.stringify({ app: 'abeer', format: 1, savedAt: Date.now(), data })], { type: 'application/json' });
+  let file = null;
+  try { file = new File([blob], name, { type: 'application/json' }); } catch (e) { /* older browser */ }
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    // iPhone: opens the share sheet, where "Save to Files" puts it in Files or iCloud Drive.
+    navigator.share({ files: [file] }).then(markBackup).catch((e) => {
+      if (!e || e.name !== 'AbortError') showError('#backupError', 'ما قدرنا نحفظ الملف. جربي مرة ثانية.');
+    });
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  markBackup();
+}
+
+function readBackup(file) {
+  const bad = () => showError('#backupError', 'هذا الملف مو نسخة احتياطية من تطبيق عبير.');
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) return bad();
+  file.text().then((text) => {
+    let obj = null;
+    try { obj = JSON.parse(text); } catch (e) { return bad(); }
+    if (!obj || obj.app !== 'abeer' || !obj.data || typeof obj.data !== 'object') return bad();
+    restorePending = { data: obj.data, savedAt: Number(obj.savedAt) || Date.now() };
+    renderSheet();
+  }).catch(bad);
+}
+
+function applyRestore() {
+  if (!restorePending) return;
+  const pin = state.pin;
+  state = normalise(restorePending.data);
+  state.pin = pin;
+  state.backupAt = Math.max(state.backupAt || 0, restorePending.savedAt);
+  trim(state);
+  state.updatedAt = Date.now();
+  restorePending = null;
+  saveLocal();
+  scheduleRemote();
+  formMethod = journey() ? state.method : 'weeks';
+  closeSheet();
+  render();
+  toast('رجعت معلوماتك من النسخة الاحتياطية');
+}
+
 // ---------- app lock ----------
 let pinEntry = '';
 let pinFormOpen = false;
@@ -1528,6 +1726,7 @@ function renderSheet() {
         <button type="submit" class="btn block">${state.pin ? 'حفظ الرمز الجديد' : 'تفعيل القفل'}</button>
       </form>` : ''}
     </section>
+    ${backupCard()}
     ${dateForm('sheet')}
     <section class="card">
       <h2>مسح كل البيانات</h2>
@@ -1539,6 +1738,7 @@ function renderSheet() {
 function openSheet() {
   formMethod = state.method;
   resetArmed = false;
+  restorePending = null;
   renderSheet();
   $('#sheet').hidden = false;
   $('#closeSheet').focus();
@@ -1590,6 +1790,19 @@ document.addEventListener('click', (e) => {
   if (t.dataset.seg === 'counter') { counterTab = t.dataset.value; return render(); }
   if (t.dataset.seg === 'tracker') { trackerTab = t.dataset.value; return render(); }
   if (t.dataset.seg === 'food') { foodDay = Number(t.dataset.value); return render(); }
+  if (t.dataset.mood) return toggleJournal('mood', Number(t.dataset.mood));
+  if (t.dataset.sym) return toggleJournal('sym', t.dataset.sym);
+  if (t.dataset.goto === 'questions') {
+    trackerTab = 'questions';
+    if (location.hash === '#tracker') { render(); window.scrollTo(0, 0); } else location.hash = 'tracker';
+    return;
+  }
+  if (t.dataset.goto === 'backup') {
+    openSheet();
+    const c = $('#backupCard');
+    if (c) c.scrollIntoView({ block: 'start' });
+    return;
+  }
 
   if (t.dataset.del) {
     const key = t.dataset.del;
@@ -1631,6 +1844,10 @@ document.addEventListener('click', (e) => {
         else s.running = Date.now();
       });
     case 'openSettings': return openSheet();
+    case 'backupSave': return saveBackup();
+    case 'backupPick': showError('#backupError', ''); return $('#backupFile').click();
+    case 'restoreYes': return applyRestore();
+    case 'restoreNo': restorePending = null; return renderSheet();
     case 'closeSheet': return closeSheet();
     case 'pinChange': pinFormOpen = true; return renderSheet();
     case 'pinOff':
@@ -1668,6 +1885,7 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('change', (e) => {
+  if (e.target.id === 'backupFile') { readBackup(e.target.files && e.target.files[0]); e.target.value = ''; return; }
   const id = e.target.dataset && e.target.dataset.bag;
   if (!id) return;
   const on = e.target.checked;
@@ -1710,6 +1928,17 @@ document.addEventListener('submit', (e) => {
     const date = $('#apptDate').value;
     if (!showError('#apptError', !title ? 'اكتبي وش الموعد.' : !date ? 'اختاري تاريخ الموعد.' : '')) return;
     return commit((s) => { s.appts.push({ id: newId(), title, date, time: $('#apptTime').value, note: $('#apptNote').value.trim() }); }, 'انضاف الموعد');
+  }
+  if (f.id === 'qForm') {
+    const text = $('#qText').value.trim();
+    if (!showError('#qError', text ? '' : 'اكتبي السؤال.')) return;
+    return commit((s) => { s.questions.push({ id: newId(), text, answer: '', createdAt: todayISO(), answeredAt: '' }); }, 'انضاف السؤال');
+  }
+  if (f.dataset.qform) {
+    const answer = f.querySelector('input').value.trim();
+    if (!answer) return toast('اكتبي جواب الطبيبة أول');
+    const id = f.dataset.qform;
+    return commit((s) => { const q = s.questions.find((x) => x.id === id); if (q) { q.answer = answer; q.answeredAt = todayISO(); } }, 'انحفظ الجواب');
   }
   if (f.id === 'weightForm') {
     const raw = $('#wKg').value.replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('٫', '.').replace(',', '.');
