@@ -1,0 +1,1764 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="عبير">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#f6f0f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17111b" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>عبير</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Reem+Kufi:wght@500;700&display=swap">
+<style>
+  /* Layout: one phone-width column; sticky header with the calligraphic name, a progress-ring hero,
+     stacked sections, and a fixed bottom tab bar. Fig-plum accent, pistachio for growth, apricot for care. */
+  :root {
+    --bg: #f6f0f5; --surface: #ffffff; --surface-2: #f1e7f0; --line: #e5d7e3;
+    --ink: #2b1d30; --ink-2: #6c5871;
+    --accent: #8b3f76; --accent-ink: #ffffff; --accent-soft: #f4dded;
+    --leaf: #4f8d5d; --leaf-soft: #dceedf;
+    --apricot: #c8682f; --apricot-soft: #fbe4d5;
+    --danger: #b4233c; --danger-soft: #f9dde2;
+    --shadow: rgba(60, 25, 55, .10);
+    --f-name: "Aref Ruqaa", "Noto Naskh Arabic", "Times New Roman", serif;
+    --f-ui: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+    --f-num: "Reem Kufi", "IBM Plex Sans Arabic", "Segoe UI", sans-serif;
+    --f-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17111b; --surface: #221a27; --surface-2: #2c2232; --line: #3b2f41;
+      --ink: #f2e9f3; --ink-2: #b9a7bd;
+      --accent: #e392c9; --accent-ink: #2a1226; --accent-soft: #3e2439;
+      --leaf: #8fd09d; --leaf-soft: #1f3426;
+      --apricot: #f2a878; --apricot-soft: #3b2619;
+      --danger: #ff8c9c; --danger-soft: #3f1a23;
+      --shadow: rgba(0, 0, 0, .45);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17111b; --surface: #221a27; --surface-2: #2c2232; --line: #3b2f41;
+    --ink: #f2e9f3; --ink-2: #b9a7bd;
+    --accent: #e392c9; --accent-ink: #2a1226; --accent-soft: #3e2439;
+    --leaf: #8fd09d; --leaf-soft: #1f3426;
+    --apricot: #f2a878; --apricot-soft: #3b2619;
+    --danger: #ff8c9c; --danger-soft: #3f1a23;
+    --shadow: rgba(0, 0, 0, .45);
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f-ui); }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.3; }
+  p { margin: 0; }
+  .emoji { font-family: var(--f-emoji); font-weight: 400; line-height: 1; }
+  .num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+  .muted { color: var(--ink-2); }
+  .small { font-size: 14px; }
+
+  .app {
+    max-width: 560px; margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0 calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Header */
+  .top {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding-block: 10px; background: var(--bg);
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .brand .name { font: 700 34px/1.2 var(--f-name); color: var(--accent); }
+  .brand .sub { font-size: 14px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .icon-btn {
+    width: 44px; height: 44px; flex: none; border-radius: 50%;
+    border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center;
+  }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Sections */
+  .view { display: grid; gap: 16px; padding-top: 4px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
+  .card h2 { font-size: 18px; font-weight: 700; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .eyebrow { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0; }
+  .note { border-radius: 16px; padding: 12px 14px; background: var(--apricot-soft); color: var(--ink); font-size: 14px; }
+  .note.warn { background: var(--danger-soft); }
+  .note strong { color: var(--apricot); }
+  .note.warn strong { color: var(--danger); }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: 18px; }
+  .ring { position: relative; width: 132px; height: 132px; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring .track { stroke: var(--surface-2); }
+  .ring .fill { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset .8s ease; }
+  .ring .center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+  .ring .wk { font: 700 44px/1 var(--f-num); color: var(--ink); }
+  .ring .wk-label { font-size: 13px; color: var(--ink-2); }
+  .hero-text { display: grid; gap: 6px; min-width: 0; }
+  .hero-text .big { font-size: 20px; font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 700; }
+  .chip.leaf { background: var(--leaf-soft); color: var(--leaf); }
+  .chip.apricot { background: var(--apricot-soft); color: var(--apricot); }
+
+  .baby { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+  .baby .fruit { font-size: 64px; width: 84px; height: 84px; display: grid; place-items: center; border-radius: 24px; background: var(--leaf-soft); }
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .stat { background: var(--surface-2); border-radius: 16px; padding: 10px 12px; }
+  .stat .v { font: 700 22px/1.2 var(--f-num); }
+  .stat .k { font-size: 13px; color: var(--ink-2); }
+
+  /* Week strip */
+  .weeks { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x proximity; }
+  .wk-chip { flex: none; scroll-snap-align: center; min-width: 52px; padding: 8px 6px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); display: grid; justify-items: center; gap: 2px; }
+  .wk-chip .emoji { font-size: 22px; }
+  .wk-chip .n { font: 700 15px/1 var(--f-num); }
+  .wk-chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .wk-chip.now { border-color: var(--accent); border-width: 2px; }
+
+  /* Buttons & forms */
+  .btn { border: 0; border-radius: 16px; padding: 12px 18px; font-weight: 700; background: var(--accent); color: var(--accent-ink); min-height: 48px; }
+  .btn.ghost { background: var(--surface-2); color: var(--ink); }
+  .btn.danger { background: var(--danger); color: var(--surface); }
+  .btn.block { width: 100%; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
+  .row > * { flex: 1 1 140px; min-width: 0; }
+  .field { display: grid; gap: 6px; }
+  .field label { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+  .field input, .field select, .field textarea { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 11px 12px; min-height: 48px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 16px; background: var(--surface-2); }
+  .seg button { border: 0; border-radius: 12px; padding: 10px; background: transparent; font-weight: 700; color: var(--ink-2); }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--accent); box-shadow: 0 1px 4px var(--shadow); }
+  .error { color: var(--danger); font-size: 14px; font-weight: 500; }
+
+  /* Lists */
+  .list { list-style: none; margin: 0; padding: 0; display: grid; }
+  .list li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); min-width: 0; }
+  .list li:first-child { border-top: 0; }
+  .list .grow { flex: 1; min-width: 0; }
+  .list .title { font-weight: 700; overflow-wrap: anywhere; }
+  .del { border: 0; background: transparent; color: var(--ink-2); padding: 8px; border-radius: 10px; font-size: 14px; }
+  .del.confirm { background: var(--danger-soft); color: var(--danger); font-weight: 700; }
+  .empty { color: var(--ink-2); font-size: 14px; padding: 6px 0; }
+  .date-badge { flex: none; width: 52px; text-align: center; border-radius: 14px; background: var(--accent-soft); color: var(--accent); padding: 6px 0; }
+  .date-badge .d { font: 700 20px/1.1 var(--f-num); }
+  .date-badge .m { font-size: 12px; font-weight: 700; }
+  .past .date-badge { background: var(--surface-2); color: var(--ink-2); }
+
+  /* Counters */
+  .tap {
+    width: min(220px, 70vw); aspect-ratio: 1; max-width: 100%; margin: 4px auto; border-radius: 50%; border: 0;
+    background: var(--accent); color: var(--accent-ink); display: grid; place-content: center; gap: 2px;
+    box-shadow: 0 0 0 10px var(--accent-soft); transition: transform .08s ease;
+  }
+  .tap:active { transform: scale(.96); }
+  .tap .count { font: 700 56px/1 var(--f-num); }
+  .tap .lbl { font-size: 15px; font-weight: 700; }
+  .tap.running { background: var(--apricot); box-shadow: 0 0 0 10px var(--apricot-soft); }
+  .timer { text-align: center; font: 700 26px/1.2 var(--f-num); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: right; padding: 8px 6px; border-top: 1px solid var(--line); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  th { color: var(--ink-2); font-weight: 500; border-top: 0; }
+
+  /* Weight chart */
+  .chart { width: 100%; height: 160px; display: block; }
+  .chart .grid { stroke: var(--line); stroke-width: 1; }
+  .chart .area { fill: var(--leaf-soft); }
+  .chart .line { fill: none; stroke: var(--leaf); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .chart .dot { fill: var(--leaf); }
+  .chart text { fill: var(--ink-2); font: 500 11px var(--f-ui); }
+
+  /* Bag */
+  .check { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); cursor: pointer; }
+  .check:first-of-type { border-top: 0; }
+  .check input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
+  .check.done span { color: var(--ink-2); text-decoration: line-through; }
+  .bar { height: 10px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--leaf); border-radius: inherit; transition: width .4s ease; }
+
+  /* Bottom nav */
+  .tabs {
+    position: fixed; inset: auto 0 0; z-index: 6; background: var(--surface); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+  }
+  .tabs nav { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .tabs a { display: grid; justify-items: center; gap: 2px; padding: 8px 2px 10px; color: var(--ink-2); text-decoration: none; font-size: 12px; font-weight: 700; }
+  .tabs a .emoji { font-size: 22px; filter: grayscale(1); opacity: .7; }
+  .tabs a[aria-current="page"] { color: var(--accent); }
+  .tabs a[aria-current="page"] .emoji { filter: none; opacity: 1; }
+
+  /* Sheet (settings) */
+  .sheet { position: fixed; inset: 0; z-index: 20; display: grid; align-items: end; background: rgba(20, 8, 20, .45); }
+  .sheet .panel {
+    background: var(--bg); border-radius: 26px 26px 0 0; max-height: 92%; overflow-y: auto;
+    width: 100%; max-width: 560px; margin: 0 auto; display: grid; gap: 16px;
+    padding-block: 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Welcome */
+  .welcome { display: grid; gap: 18px; padding-top: 18px; }
+  .welcome .hello { font: 700 52px/1.2 var(--f-name); color: var(--accent); }
+  .welcome .lead { font-size: 18px; }
+
+  .toast {
+    position: fixed; z-index: 30; left: 50%; transform: translateX(-50%);
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 700;
+  }
+  .sync { font-size: 12px; color: var(--ink-2); text-align: center; }
+
+  @media (max-width: 380px) {
+    .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .hero .chips { justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+<style>
+  /* Illustration and food tokens */
+  :root {
+    --womb-1: #fdebe7; --womb-2: #f5c7ce; --womb-edge: #e9adb9; --placenta: #c4566e;
+    --fetus: #f3b8a6; --fetus-line: #c67a6b; --fetus-detail: #85463f; --cord: #d98aa3;
+    --yolk: #f3d272; --heart: #d6364d; --blush: rgba(232, 110, 120, .35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --womb-1: #4b2b40; --womb-2: #2e1928; --womb-edge: #5e3652; --placenta: #a9465f;
+      --fetus: #eaa995; --fetus-line: #ad675a; --fetus-detail: #6b3832; --cord: #c47b93;
+      --yolk: #dfc061; --heart: #ff6b80; --blush: rgba(255, 120, 130, .3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --womb-1: #4b2b40; --womb-2: #2e1928; --womb-edge: #5e3652; --placenta: #a9465f;
+    --fetus: #eaa995; --fetus-line: #ad675a; --fetus-detail: #6b3832; --cord: #c47b93;
+    --yolk: #dfc061; --heart: #ff6b80; --blush: rgba(255, 120, 130, .3);
+  }
+
+  .seg { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 1fr; }
+  .tabs nav { grid-template-columns: repeat(5, 1fr); }
+
+  .fetus-wrap { display: grid; justify-items: center; gap: 8px; }
+  canvas.fetus { width: min(280px, 100%); height: auto; display: block; }
+  .size-line { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; text-align: center; }
+  .size-line .emoji { font-size: 28px; }
+  .caption { font-size: 12px; color: var(--ink-2); text-align: center; }
+
+  .focus-card { background: var(--accent-soft); border-color: transparent; }
+  .focus-card .eyebrow { color: var(--accent); }
+  .meal { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .meal:first-child { border-top: 0; }
+  .meal .when { font-weight: 700; color: var(--accent); font-size: 14px; padding-top: 2px; }
+  .meal .what { font-weight: 500; overflow-wrap: anywhere; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tag { font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--leaf-soft); color: var(--leaf); font-weight: 700; }
+  .tag.focus { background: var(--accent); color: var(--accent-ink); }
+  .bullets { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; font-size: 15px; }
+
+  /* App lock */
+  .lock {
+    position: fixed; inset: 0; z-index: 50; background: var(--bg); display: grid; place-items: center;
+    padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .lock-box { width: min(320px, 100%); display: grid; justify-items: center; gap: 16px; text-align: center; }
+  .lock-name { font: 700 48px/1.2 var(--f-name); color: var(--accent); }
+  .lock-text { color: var(--ink-2); min-height: 3.2em; display: grid; place-items: center; }
+  .dots { display: flex; gap: 14px; direction: ltr; }
+  .dots i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent); }
+  .dots i.on { background: var(--accent); }
+  .dots.shake { animation: lockshake .35s; }
+  @keyframes lockshake { 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(2px); } }
+  .pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 14px; }
+  .pad button { height: 72px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); font: 500 28px var(--f-num); color: var(--ink); touch-action: manipulation; }
+  .pad button:active { background: var(--accent-soft); }
+  .lock-forgot { border: 0; background: transparent; color: var(--accent); font-weight: 700; padding: 8px; }
+</style>
+<style>
+  .tabs a svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .tabs a[aria-current="page"] svg { stroke-width: 2.2; }
+  details.card summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  details.card summary::-webkit-details-marker { display: none; }
+  details.card summary::after { content: "+"; font: 700 22px/1 var(--f-num); color: var(--accent); }
+  details.card[open] summary::after { content: "−"; }
+  .signs { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; font-size: 15px; }
+</style>
+
+<div class="app" id="app" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand">
+      <span class="name" id="brandName">عبير</span>
+      <span class="sub" id="brandSub">رحلة الحمل</span>
+    </div>
+    <button type="button" class="icon-btn" id="openSettings" aria-label="الإعدادات" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+    </button>
+  </header>
+  <main id="main" aria-live="polite">
+    <section class="welcome">
+      <p class="hello">أهلًا عبير</p>
+      <p class="lead">جاري التحميل…</p>
+    </section>
+  </main>
+  <p class="sync" id="syncNote" hidden></p>
+</div>
+
+<div class="tabs" id="tabs" dir="rtl" lang="ar" hidden>
+  <nav aria-label="الأقسام">
+    <a href="#today" data-view="today">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>اليوم</a>
+    <a href="#weeks" data-view="weeks">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>الأسابيع</a>
+    <a href="#food" data-view="food">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16a8 8 0 0 1-16 0z"/><path d="M9 4c0 2 2 2 2 4M14 4c0 2 2 2 2 4"/></svg>أكلي</a>
+    <a href="#counters" data-view="counters">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M10 2h4"/></svg>العدّادات</a>
+    <a href="#tracker" data-view="tracker">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></svg>متابعتي</a>
+  </nav>
+</div>
+
+<div class="sheet" id="sheet" dir="rtl" lang="ar" hidden>
+  <div class="panel" id="sheetPanel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<div class="lock" id="lock" dir="rtl" lang="ar" role="dialog" aria-modal="true" aria-label="قفل التطبيق" hidden>
+  <div class="lock-box">
+    <p class="lock-name">عبير</p>
+    <p class="lock-text" id="lockText" role="status">اكتبي الرمز السري</p>
+    <div class="dots" id="lockDots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="pad" dir="ltr">
+      <button type="button" data-pin="1">1</button><button type="button" data-pin="2">2</button><button type="button" data-pin="3">3</button>
+      <button type="button" data-pin="4">4</button><button type="button" data-pin="5">5</button><button type="button" data-pin="6">6</button>
+      <button type="button" data-pin="7">7</button><button type="button" data-pin="8">8</button><button type="button" data-pin="9">9</button>
+      <span></span><button type="button" data-pin="0">0</button><button type="button" data-pin="del" aria-label="حذف رقم">⌫</button>
+    </div>
+    <button type="button" class="lock-forgot" id="lockForgot">نسيتي الرمز؟</button>
+  </div>
+</div>
+<script>
+(() => {
+// Week-by-week guide. Sizes are approximate averages: crown to rump until week 19, crown to heel from week 20.
+// [emoji, size comparison, length, weight, what is happening]
+const WEEKS = {
+  4: ['🌱', 'بذرة صغيرة', '0.1 سم', 'أقل من 1 غ', 'البويضة الملقّحة انغرست في جدار الرحم، وبدأت المشيمة تتكوّن.'],
+  5: ['🌱', 'حبة سمسم', '0.2 سم', 'أقل من 1 غ', 'بدأ يتكوّن القلب والجهاز العصبي، وقلبه الصغير يبدأ ينبض.'],
+  6: ['🫐', 'حبة توت صغيرة', '0.6 سم', 'أقل من 1 غ', 'تظهر براعم اليدين والرجلين، وغالبًا يبان نبض القلب في السونار.'],
+  7: ['🫐', 'توتة زرقاء', '1.3 سم', 'أقل من 1 غ', 'الدماغ ينمو بسرعة، وملامح الوجه تبدأ تتشكّل.'],
+  8: ['🍒', 'كرزة', '1.6 سم', '1 غ', 'تتكوّن أصابع اليدين والرجلين، ويتحرك حركات خفيفة ما تحسين فيها.'],
+  9: ['🍇', 'حبة عنب', '2.3 سم', '2 غ', 'الأعضاء الأساسية كلها في طريقها للاكتمال.'],
+  10: ['🍓', 'فراولة', '3.1 سم', '4 غ', 'أعضاؤه الحيوية تكوّنت وبدأت تشتغل، ومن الحين يسمّونه جنين.'],
+  11: ['🍋', 'ليمونة صغيرة', '4.1 سم', '7 غ', 'تبدأ الأظافر تظهر، وراسه كبير مقارنة بجسمه وهذا طبيعي.'],
+  12: ['🍑', 'خوخة صغيرة', '5.4 سم', '14 غ', 'يقدر يفتح ويقفل أصابعه، والكليتين بدأت تشتغل.'],
+  13: ['🍋', 'ليمونة', '7.4 سم', '23 غ', 'آخر أسبوع في الثلث الأول، والحبال الصوتية بدأت تتكوّن.'],
+  14: ['🍑', 'خوخة', '8.7 سم', '43 غ', 'يحرّك عضلات وجهه، ويبدأ ينمو شعر ناعم على جسمه.'],
+  15: ['🍎', 'تفاحة', '10.1 سم', '70 غ', 'عظامه تقوى، ويحس بالضوء من ورا جفونه المقفلة.'],
+  16: ['🥑', 'أفوكادو', '11.6 سم', '100 غ', 'عضلات ظهره ورقبته تقوى، وصار يرفع راسه أكثر.'],
+  17: ['🥔', 'حبة بطاطس', '13 سم', '140 غ', 'تبدأ الدهون تتكوّن تحت جلده، والمشيمة تكبر معه.'],
+  18: ['🫑', 'فلفل رومي', '14.2 سم', '190 غ', 'يسمع أصوات جسمك مثل نبض قلبك، وممكن تبدين تحسين بحركته.'],
+  19: ['🍅', 'طماطم كبيرة', '15.3 سم', '240 غ', 'تتكوّن طبقة تحمي جلده، وحواسه تتطور بسرعة.'],
+  20: ['🍌', 'موزة', '25.6 سم', '300 غ', 'نص الطريق! غالبًا يسوّون السونار التفصيلي بين الأسبوع 18 و22.'],
+  21: ['🥕', 'جزرة', '26.7 سم', '360 غ', 'حركته صارت أقوى، وجهازه الهضمي يتدرّب.'],
+  22: ['🍠', 'حبة بطاطا حلوة', '27.8 سم', '430 غ', 'ملامحه أوضح، وحواجبه ورموشه بدأت تظهر.'],
+  23: ['🥭', 'مانجو', '28.9 سم', '500 غ', 'يسمع الأصوات من برّا. كلّميه خليه يتعوّد على صوتك.'],
+  24: ['🌽', 'كوز ذرة', '30 سم', '600 غ', 'رئتاه تتطور، وجلده لسا رقيق.'],
+  25: ['🥦', 'بروكلي', '34.6 سم', '660 غ', 'وزنه يزيد بسرعة، وشعره بدأ ياخذ لون.'],
+  26: ['🥬', 'خسّة', '35.6 سم', '760 غ', 'بدأ يفتح عيونه، ويتفاعل مع الأصوات والحركة.'],
+  27: ['🥦', 'قرنبيط', '36.6 سم', '875 غ', 'آخر أسبوع في الثلث الثاني. ممكن تحسين بفواق عنده كنبضات منتظمة.'],
+  28: ['🍆', 'باذنجانة', '37.6 سم', '1 كغ', 'بداية الثلث الأخير. يرمش ويحلم، وهذا وقت تتعرّفين فيه على نمط حركته.'],
+  29: ['🎃', 'قرعة صغيرة', '38.6 سم', '1.15 كغ', 'عضلاته ورئتاه تنضج، وعظامه تاخذ كالسيوم كثير.'],
+  30: ['🥥', 'جوزة هند', '39.9 سم', '1.3 كغ', 'دماغه ينمو بسرعة كبيرة.'],
+  31: ['🍈', 'شمامة صغيرة', '41.1 سم', '1.5 كغ', 'يلف راسه يمين ويسار، وحواسه الخمس كلها تشتغل.'],
+  32: ['🎃', 'قرعة', '42.4 سم', '1.7 كغ', 'أظافره وصلت لأطراف أصابعه، وكثير من الأجنة يصير راسهم لتحت في هالفترة.'],
+  33: ['🍍', 'أناناسة', '43.7 سم', '1.9 كغ', 'عظامه تقوى، وعظام راسه تبقى لينة عشان تسهّل الولادة.'],
+  34: ['🍈', 'شمامة', '45 سم', '2.1 كغ', 'رئتاه وجهازه العصبي قرّبت تنضج.'],
+  35: ['🥥', 'جوزة هند كبيرة', '46.2 سم', '2.4 كغ', 'المكان صار ضيق عليه، فممكن يتغير شكل حركته، لكن الحركة ما المفروض تقل.'],
+  36: ['🥬', 'ملفوفة', '47.4 سم', '2.6 كغ', 'غالبًا ينزل لتحت في الحوض استعدادًا للولادة.'],
+  37: ['🍉', 'بطيخة صغيرة', '48.6 سم', '2.9 كغ', 'قرّب يكتمل، ويتدرّب على التنفس والمص.'],
+  38: ['🍉', 'بطيخة', '49.8 سم', '3.1 كغ', 'أعضاؤه جاهزة تقريبًا، ويكمل يزيد وزن.'],
+  39: ['🍉', 'بطيخة', '50.7 سم', '3.3 كغ', 'مكتمل النمو، وينتظر الوقت المناسب.'],
+  40: ['🍉', 'بطيخة كبيرة', '51.2 سم', '3.5 كغ', 'هذا الأسبوع المتوقع للولادة، وقليل من المواليد ينولدون في نفس اليوم بالضبط.']
+};
+
+// Tips for mum, by the first week each one applies from.
+const TIPS = [
+  [0, 'الغثيان والتعب طبيعيين في الثلث الأول. كلي وجبات صغيرة ومتكررة، واشربي ماء كثير، وخذي حمض الفوليك مثل ما وصفت لك طبيبتك.'],
+  [14, 'كثير من الحوامل يحسّون بطاقة أكثر في الثلث الثاني. المشي الخفيف مفيد إذا طبيبتك موافقة.'],
+  [21, 'نامي على جنبك إذا تقدرين، وحطي مخدة بين ركبك تريّح ظهرك.'],
+  [28, 'انتبهي لنمط حركة البيبي كل يوم. إذا قلّت أو تغيّرت عن المعتاد، كلّمي طبيبتك أو روحي الطوارئ على طول.'],
+  [34, 'جهّزي شنطة المستشفى والأوراق، واتفقي على خطة الطريق للمستشفى ومين بيوصلك.'],
+  [37, 'إذا نزل ماء، أو صار نزيف، أو طلق منتظم وقوي، أو قلّت الحركة، روحي المستشفى على طول.']
+];
+
+// Signs that need a call to the doctor or a hospital visit straight away.
+const WARNING_SIGNS = [
+  'نزيف من المهبل',
+  'نزول ماء أو سائل بشكل مستمر',
+  'ألم قوي في البطن ما يروح',
+  'صداع قوي مع زغللة في النظر، أو تورّم مفاجئ في الوجه واليدين',
+  'حرارة 38 أو أكثر',
+  'حركة البيبي قلّت أو تغيّرت عن المعتاد',
+  'طلق منتظم قبل الأسبوع 37'
+];
+
+const BAG = [
+  ['لعبير', [
+    ['m1', 'الهوية وملف الحمل وبطاقة التأمين'],
+    ['m2', 'ثوب مريح أو بيجامة بأزرار من قدّام'],
+    ['m3', 'حمّالات رضاعة وفوط للصدر'],
+    ['m4', 'فوط نفاس'],
+    ['m5', 'ملابس داخلية مريحة'],
+    ['m6', 'شبشب وجوارب'],
+    ['m7', 'أدوات العناية الشخصية'],
+    ['m8', 'شاحن الجوال'],
+    ['m9', 'ملابس للطلعة من المستشفى']
+  ]],
+  ['للبيبي', [
+    ['b1', 'ملابس مواليد (2 إلى 3 قطع)'],
+    ['b2', 'بطانية خفيفة'],
+    ['b3', 'حفاضات مواليد'],
+    ['b4', 'مناديل مبللة'],
+    ['b5', 'طاقية وجوارب'],
+    ['b6', 'كرسي السيارة']
+  ]],
+  ['أشياء ثانية', [
+    ['o1', 'سناك وماء'],
+    ['o2', 'مخدة صغيرة'],
+    ['o3', 'كيس للملابس المستعملة']
+  ]]
+];
+// ---------- nutrition ----------
+// Nutrient: [name, why it matters for the baby or mum]
+const NUTRIENTS = {
+  folate: ['حمض الفوليك', 'يساعد في تكوين الدماغ والحبل الشوكي وخلايا الدم'],
+  b12: ['فيتامين ب12', 'يساعد في تكوين الأعصاب وخلايا الدم'],
+  iodine: ['اليود', 'مهم لنمو الدماغ ولعمل الغدة الدرقية'],
+  choline: ['الكولين', 'يدعم نمو الدماغ والحبل الشوكي'],
+  vitc: ['فيتامين سي', 'يساعد جسمك يمتص الحديد ويقوّي المناعة'],
+  protein: ['البروتين', 'يبني خلايا البيبي وعضلاته وأعضاءه'],
+  calcium: ['الكالسيوم', 'يبني عظام البيبي وأسنانه ويحافظ على عظامك'],
+  vitd: ['فيتامين د', 'يساعد جسمك يستفيد من الكالسيوم في بناء العظام'],
+  iron: ['الحديد', 'يكوّن دم أكثر لك وللبيبي ويوصّل له الأكسجين'],
+  omega3: ['أوميغا 3', 'يدعم نمو دماغ البيبي وعيونه، وأهم مصدر له السمك'],
+  fiber: ['الألياف', 'تخفف الإمساك اللي يكثر في الحمل']
+};
+
+// [from week, what the baby is building, nutrients to focus on (one per day, in turn)]
+const FOOD_STAGES = [
+  [0, 'يتكوّن دماغه وحبله الشوكي وقلبه', ['folate', 'b12', 'iodine', 'choline', 'vitc']],
+  [9, 'أعضاؤه تكتمل وعظامه تبدأ تتكوّن', ['folate', 'protein', 'iodine', 'calcium', 'vitc']],
+  [14, 'عظامه وعضلاته تقوى وحواسه تتطوّر', ['calcium', 'vitd', 'protein', 'iron', 'fiber']],
+  [21, 'دماغه ينمو بسرعة ودمك يزيد', ['iron', 'vitc', 'omega3', 'protein', 'fiber']],
+  [28, 'دماغه ينمو بسرعة وعظامه تتقوّى ويخزّن دهون', ['omega3', 'calcium', 'iron', 'protein', 'fiber']],
+  [34, 'وزنه يزيد ويستعد للولادة', ['iron', 'calcium', 'protein', 'fiber', 'vitd']]
+];
+
+// [meal, nutrients it gives]
+const BREAKFAST = [
+  ['بيض مسلوق مستوي زين مع خبز بر وخيار وطماطم', ['choline', 'protein', 'iodine', 'b12', 'vitc']],
+  ['شوفان بالحليب مع موز وملعقة طحينة', ['fiber', 'calcium', 'iron']],
+  ['فول مدمّس بزيت زيتون وليمون مع خبز بر (إذا ما عندك أنيميا الفول)', ['folate', 'iron', 'protein', 'fiber', 'vitc']],
+  ['لبنة أو جبن مبستر مع خبز بر وخضار', ['calcium', 'protein', 'b12']],
+  ['زبادي مع فواكه مقطّعة وحفنة جوز', ['calcium', 'protein', 'omega3', 'vitc']],
+  ['شكشوكة والبيض مستوي زين، مع خبز بر', ['protein', 'choline', 'vitc', 'b12']],
+  ['حمص بالطحينة مع خبز بر وخيار', ['folate', 'iron', 'protein', 'fiber', 'calcium']],
+  ['حبوب فطور مدعّمة بالحديد وحمض الفوليك مع حليب', ['folate', 'iron', 'calcium', 'vitd', 'b12']],
+  ['توست بر مع أفوكادو وبيضة مسلوقة', ['folate', 'choline', 'protein', 'fiber']]
+];
+const LUNCH = [
+  ['كبسة دجاج مع سلطة خضراء بالليمون', ['protein', 'b12', 'vitc']],
+  ['سلمون مشوي مع رز وخضار', ['omega3', 'protein', 'vitd', 'iodine', 'b12'], 'oily'],
+  ['شوربة عدس أو مجدّرة مع سلطة طماطم وليمون', ['folate', 'iron', 'protein', 'fiber', 'vitc']],
+  ['ملوخية مع دجاج ورز', ['folate', 'iron', 'protein', 'vitc']],
+  ['لحم مطبوخ زين مع خضار مشكّلة ورز', ['iron', 'protein', 'b12']],
+  ['سبانخ مطبوخة مع حمص أو لحم', ['iron', 'folate', 'protein', 'fiber']],
+  ['روبيان مطبوخ زين مع رز وسلطة', ['protein', 'iodine', 'omega3', 'b12'], 'fish'],
+  ['برياني لحم مع لبن', ['iron', 'protein', 'calcium', 'b12']],
+  ['صالونة خضار باللحم مع رز', ['protein', 'iron', 'fiber', 'vitc']],
+  ['سمك بلطي مشوي مع رز وسلطة', ['protein', 'iodine', 'b12'], 'fish']
+];
+const DINNER = [
+  ['شوربة خضار مع قطعة دجاج', ['protein', 'vitc', 'fiber']],
+  ['سندويش تونة معلّبة خفيفة (لايت) مع خس وطماطم', ['omega3', 'protein', 'iodine', 'b12'], 'fish'],
+  ['عجة بيض بالخضار مع خبز بر', ['protein', 'choline', 'vitc', 'b12']],
+  ['سلطة حمص وتبولة', ['folate', 'iron', 'vitc', 'fiber']],
+  ['سردين مع خبز بر وخيار', ['omega3', 'calcium', 'vitd', 'protein', 'b12'], 'oily'],
+  ['زبادي بالخيار والنعناع مع خبز بر', ['calcium', 'protein', 'iodine']],
+  ['جريش أو هريس مع سلطة', ['fiber', 'protein']],
+  ['سندويش جبن مبستر مع خضار', ['calcium', 'protein', 'b12']],
+  ['بطاطا حلوة مشوية مع زبادي', ['fiber', 'vitc', 'calcium']]
+];
+const SNACKS = [
+  ['برتقالة أو حبتين كيوي', ['vitc', 'folate', 'fiber']],
+  ['حفنة لوز', ['calcium', 'protein', 'fiber']],
+  ['كوب حليب أو لبن', ['calcium', 'vitd', 'iodine', 'protein', 'b12']],
+  ['3 تمرات مع كوب لبن', ['fiber', 'iron', 'calcium']],
+  ['حفنة جوز', ['omega3', 'protein']],
+  ['زبادي بالفواكه', ['calcium', 'protein', 'vitc']],
+  ['جزر وخيار مع حمص', ['fiber', 'folate', 'iron']],
+  ['صحن فراولة', ['vitc', 'folate', 'fiber']],
+  ['بيضة مسلوقة', ['choline', 'protein', 'b12']],
+  ['مشمش مجفف وزبيب', ['iron', 'fiber']]
+];
+
+const FOOD_AVOID = [
+  'اللحم والدجاج والبيض لازم يكونون مستويين زين، بدون أجزاء نيّة أو صفار سايل.',
+  'الحليب ومنتجاته لازم تكون مبسترة، ومنها حليب النوق.',
+  'الأجبان الطرية المعتّقة مثل البري والكممبير والجبن الأزرق، إلا إذا انطبخت لين صارت حارة. أما الأجبان المبسترة مثل الفيتا والموزاريلا والحلوم والجبن الكريمي فعادي.',
+  'اللحوم الباردة الجاهزة مثل اللانشون والمرتديلا والنقانق، إلا إذا سخّنتيها لين تصير حارة مرة.',
+  'الكبدة وأكلاتها، لأن فيها فيتامين أ بكمية عالية تضر البيبي.',
+  'السمك العالي بالزئبق: القرش وأبو سيف والمارلين والماكريل الملكي وتونة العين الكبيرة (Bigeye).',
+  'السوشي والسمك النيّ والمحار النيّ.',
+  'الفول، إذا عندك أنيميا الفول (نقص إنزيم G6PD) أو حاملة لها.',
+  'الكافيين فوق 200 ملغ في اليوم: تقريبًا كوب قهوة مقطّرة واحد أو كوبين قهوة سريعة. وانتبهي للشاي ومشروبات الطاقة.',
+  'الأعشاب والخلطات بدون ما تسألين طبيبتك.'
+];
+
+const FOOD_HABITS = [
+  'اشربي 8 إلى 12 كوب ماء في اليوم.',
+  'اغسلي الخضار والفواكه زين قبل الأكل.',
+  'لا تشربين الشاي أو القهوة مع الأكل على طول، لأنها تقلل امتصاص الحديد.',
+  'الفيتامينات مثل حمض الفوليك والحديد وفيتامين د، خذيها مثل ما وصفت لك طبيبتك.'
+];
+
+// Fish and tuna, from the FDA/EPA fish advice and the NHS.
+const FISH_ADVICE = [
+  'السمك مفيد لك وللبيبي: فيه بروتين وأوميغا 3 يدعم نمو دماغه وعيونه. الأفضل 2 إلى 3 وجبات سمك في الأسبوع.',
+  'التونة المعلّبة الخفيفة (لايت) من أفضل الخيارات، وتنحسب من وجبات السمك الأسبوعية.',
+  'تونة الألباكور (البيضاء) وتونة الزعانف الصفراء (Yellowfin): مرة وحدة في الأسبوع.',
+  'لا تزيدين عن 4 علب تونة متوسطة في الأسبوع.',
+  'السلمون والسردين سمك دهني: وجبتين في الأسبوع بالكثير.',
+  'الكنعد والهامور: مرة وحدة في الأسبوع بالكثير.',
+  'السمك والروبيان لازم يكونون مطبوخين زين.'
+];
+
+const CALORIES = [
+  '',
+  'ما تحتاجين أكل زيادة في الثلث الأول. الأهم نوعية الأكل.',
+  'تحتاجين تقريبًا 340 سعرة زيادة في اليوم، مثل زبادي وفاكهة وحفنة مكسرات.',
+  'تحتاجين تقريبًا 450 سعرة زيادة في اليوم، مثل سندويش صغير وكوب حليب.'
+];
+
+// Extra advice by stage: [from week, to week, title, points]
+const FOOD_EXTRA = [
+  [0, 13, 'إذا عندك غثيان', [
+    'كلي وجبات صغيرة كل ساعتين إلى ثلاث بدال الوجبات الكبيرة.',
+    'خلّي جنبك بسكوت جاف أو توست، وكلي منه قبل ما تقومين من السرير.',
+    'شاي الزنجبيل الخفيف ممكن يخفف الغثيان.',
+    'إذا ما قدرتي تثبّتين الأكل أو الموية طول اليوم، كلّمي طبيبتك.'
+  ]],
+  [28, 42, 'إذا عندك حموضة', [
+    'كلي وجبات صغيرة، وخلّي بين العشا والنوم ساعتين إلى ثلاث.',
+    'خففي الأكل الدسم والحار.'
+  ]],
+  [36, 42, 'التمر في آخر الحمل', [
+    'بعض الدراسات تقول إن أكل حوالي 6 تمرات في اليوم من الأسبوع 36 ممكن يساعد في الولادة.',
+    'إذا عندك سكر الحمل، اسألي طبيبتك أول.'
+  ]]
+];
+// ---------- helpers ----------
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const DAY = 86400000;
+const pad = (n) => String(n).padStart(2, '0');
+
+function plural(n, forms) { // forms: [one, two, few (3-10), many]
+  if (n === 1) return forms[0];
+  if (n === 2) return forms[1];
+  if (n >= 3 && n <= 10) return `${n} ${forms[2]}`;
+  return `${n} ${forms[3]}`;
+}
+const DAYS_W = ['يوم واحد', 'يومين', 'أيام', 'يوم'];
+const WEEKS_W = ['أسبوع واحد', 'أسبوعين', 'أسابيع', 'أسبوع'];
+
+// ---------- dates (calendar days, time-zone safe) ----------
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const toUTC = (iso) => { const [y, m, d] = iso.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+const fromUTC = (t) => { const d = new Date(t); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`; };
+const addDays = (iso, n) => fromUTC(toUTC(iso) + n * DAY);
+const diffDays = (a, b) => Math.round((toUTC(a) - toUTC(b)) / DAY);
+const LOC = 'ar-u-ca-gregory-nu-latn';
+const F_LONG = new Intl.DateTimeFormat(LOC, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const F_DAYMONTH = new Intl.DateTimeFormat(LOC, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+const F_MON = new Intl.DateTimeFormat(LOC, { month: 'short', timeZone: 'UTC' });
+const F_TIME = new Intl.DateTimeFormat(LOC, { hour: 'numeric', minute: '2-digit' });
+const F_STAMP = new Intl.DateTimeFormat(LOC, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+const fmtDate = (iso) => F_LONG.format(toUTC(iso));
+const fmtDayMonth = (iso) => F_DAYMONTH.format(toUTC(iso));
+const fmtTime = (ms) => F_TIME.format(new Date(ms));
+const fmtStamp = (ms) => F_STAMP.format(new Date(ms));
+const fmtClock = (hhmm) => { if (!hhmm) return ''; const [h, m] = hhmm.split(':').map(Number); const d = new Date(); d.setHours(h, m, 0, 0); return F_TIME.format(d); };
+const mmss = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 60)}:${pad(s % 60)}`; };
+
+// ---------- state ----------
+const LS_KEY = 'abeer-journey-v1';
+const blank = () => ({
+  v: 1, updatedAt: 0,
+  name: 'عبير', baby: '',
+  method: 'due', due: '', lmp: '',
+  kickSession: null,   // { start, count }
+  kicks: [],           // { id, start, end, count }
+  running: null,       // contraction start time
+  contractions: [],    // { id, start, end }
+  appts: [],           // { id, date, time, title, note }
+  weights: [],         // { id, date, kg }
+  bag: {},             // { itemId: true }
+  pin: null            // { salt, hash } when the app lock is on
+});
+
+// ---------- app lock ----------
+async function hashPin(pin, salt) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${salt}:${pin}`));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+let state = blank();
+
+function normalise(obj) {
+  const s = Object.assign(blank(), obj || {});
+  ['kicks', 'contractions', 'appts', 'weights'].forEach((k) => { if (!Array.isArray(s[k])) s[k] = []; });
+  if (!s.bag || typeof s.bag !== 'object') s.bag = {};
+  return s;
+}
+function loadLocal() {
+  try { const raw = localStorage.getItem(LS_KEY); if (raw) return normalise(JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
+  return null;
+}
+function saveLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
+}
+
+// Keep long logs within a sensible size.
+function trim(s) {
+  s.kicks = s.kicks.slice(-150);
+  s.contractions = s.contractions.slice(-200);
+  s.weights = s.weights.slice(-120);
+  s.appts = s.appts.slice(-120);
+}
+
+// ---------- account sync (private to the signed-in viewer) ----------
+const remote = { ref: null, writing: false, pending: false, timer: 0 };
+
+function setSync(text) {
+  const el = $('#syncNote');
+  el.textContent = text || '';
+  el.hidden = !text;
+}
+
+async function connectRemote() {
+  if (!window.claude || typeof window.claude.use !== 'function') return;
+  let db = null, user = null;
+  try { [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]); } catch (e) { return; }
+  if (!db || !user) return;
+  const uid = await user.id();
+  if (!uid) return;
+  try { remote.ref = db.doc(`data/users/${uid}/journey`); } catch (e) { remote.ref = null; return; }
+  const slow = setTimeout(() => setSync('ما قدرنا نوصل لحسابك الحين. بياناتك محفوظة على هذا الجهاز.'), 10000);
+  remote.ref.onSnapshot((snap) => {
+    if (!snap.metadata.fromCache) { clearTimeout(slow); setSync('بياناتك محفوظة في حسابك'); }
+    if (snap.exists) {
+      const theirs = normalise(JSON.parse(JSON.stringify(snap.data())));
+      if (theirs.updatedAt > state.updatedAt) { state = theirs; saveLocal(); render(); }
+      else if (state.updatedAt > theirs.updatedAt && !snap.metadata.hasPendingWrites) scheduleRemote();
+    } else if (!snap.metadata.fromCache && state.updatedAt > 0) {
+      scheduleRemote();
+    }
+  }, () => { clearTimeout(slow); remote.ref = null; setSync(''); });
+}
+
+function scheduleRemote() {
+  if (!remote.ref) return;
+  clearTimeout(remote.timer);
+  remote.timer = setTimeout(flushRemote, 800);
+}
+async function flushRemote() {
+  if (!remote.ref) return;
+  if (remote.writing) { remote.pending = true; return; }
+  remote.writing = true;
+  try {
+    await remote.ref.set(JSON.parse(JSON.stringify(state)));
+  } catch (e) {
+    const code = e && e.code;
+    if (code === 'quota_exceeded') toast('مساحة الحفظ في الحساب امتلت. بياناتك محفوظة على هذا الجهاز.');
+    else if (code !== 'unavailable' && code !== 'resource_exhausted') { remote.ref = null; setSync(''); }
+  }
+  remote.writing = false;
+  if (remote.pending) { remote.pending = false; flushRemote(); }
+}
+
+// Every change goes through here: save on this device, then to the account, then redraw.
+function commit(change, message) {
+  change(state);
+  trim(state);
+  state.updatedAt = Date.now();
+  saveLocal();
+  scheduleRemote();
+  render();
+  if (message) toast(message);
+}
+
+let toastTimer = 0;
+function toast(text) {
+  const el = $('#toast');
+  el.textContent = text;
+  el.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.hidden = true; }, 2200);
+}
+
+// ---------- pregnancy maths ----------
+function lmpFrom(method, value) {
+  if (!value) return '';
+  return method === 'lmp' ? value : addDays(value, -280);
+}
+function journey() {
+  const lmp = lmpFrom(state.method, state.method === 'lmp' ? state.lmp : state.due);
+  if (!lmp) return null;
+  const today = todayISO();
+  const ga = diffDays(today, lmp);
+  const due = addDays(lmp, 280);
+  return {
+    lmp, due, ga,
+    weeks: Math.floor(ga / 7),
+    days: ((ga % 7) + 7) % 7,
+    left: diffDays(due, today),
+    progress: Math.min(1, Math.max(0, ga / 280)),
+    tri: ga < 98 ? 1 : ga < 196 ? 2 : 3
+  };
+}
+function checkDate(method, value) {
+  if (!value) return 'اختاري التاريخ أول.';
+  const ga = diffDays(todayISO(), lmpFrom(method, value));
+  if (ga < 0) return method === 'lmp' ? 'هذا التاريخ في المستقبل. اكتبي أول يوم من آخر دورة.' : 'موعد الولادة هذا بعيد أكثر من 40 أسبوع. تأكدي من التاريخ.';
+  if (ga > 44 * 7) return method === 'lmp' ? 'هذا التاريخ قديم مرّة. تأكدي من أول يوم في آخر دورة.' : 'موعد الولادة هذا فات من زمان. تأكدي من التاريخ.';
+  return '';
+}
+const weekData = (w) => WEEKS[Math.min(40, Math.max(4, w))];
+const tipFor = (w) => TIPS.filter(([from]) => w >= from).pop()[1];
+// ---------- baby illustration (canvas) ----------
+// A stylised drawing that changes with the week: a curled embryo with limb buds and a beating heart
+// until week 8, then a fetus whose head-to-body proportions, limbs and fat change, turning head-down from about week 33.
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp01 = (t) => Math.max(0, Math.min(1, t));
+const smooth = (t) => { const x = clamp01(t); return x * x * (3 - 2 * x); };
+function curve(week, pts) {
+  if (week <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++) {
+    if (week <= pts[i][0]) { const [w0, v0] = pts[i - 1]; const [w1, v1] = pts[i]; return lerp(v0, v1, (week - w0) / (w1 - w0)); }
+  }
+  return pts[pts.length - 1][1];
+}
+// How much of the sac the baby fills, by week.
+const SIZE_CURVE = [[4, 0.22], [6, 0.34], [8, 0.46], [9, 0.52], [12, 0.6], [16, 0.66], [20, 0.72], [28, 0.78], [34, 0.82], [40, 0.86]];
+
+let palette = null;
+function readPalette() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = (n) => cs.getPropertyValue(n).trim();
+  palette = {
+    womb1: g('--womb-1'), womb2: g('--womb-2'), edge: g('--womb-edge'), placenta: g('--placenta'),
+    skin: g('--fetus'), line: g('--fetus-line'), detail: g('--fetus-detail'), cord: g('--cord'),
+    yolk: g('--yolk'), heart: g('--heart'), blush: g('--blush')
+  };
+}
+
+// Overlapping parts share one clean outline: outline pass first, then the fill pass.
+function partsPass(ctx, parts, color, extra) {
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  for (const p of parts) {
+    ctx.beginPath();
+    if (p.type === 'circle') { ctx.arc(p.x, p.y, p.r + extra, 0, Math.PI * 2); ctx.fill(); }
+    else if (p.type === 'ellipse') { ctx.ellipse(p.x, p.y, p.rx + extra, p.ry + extra, p.rot, 0, Math.PI * 2); ctx.fill(); }
+    else { ctx.moveTo(p.pts[0][0], p.pts[0][1]); ctx.lineTo(p.pts[1][0], p.pts[1][1]); ctx.lineWidth = p.w + extra * 2; ctx.stroke(); }
+  }
+}
+function drawParts(ctx, parts, o) {
+  partsPass(ctx, parts, palette.line, o);
+  partsPass(ctx, parts, palette.skin, 0);
+}
+
+function cord(ctx, B, P, w) {
+  const dx = P[0] - B[0], dy = P[1] - B[1];
+  const mx = (B[0] + P[0]) / 2, my = (B[1] + P[1]) / 2;
+  const nx = -dy * 0.22, ny = dx * 0.22;
+  ctx.save();
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(B[0], B[1]);
+  ctx.bezierCurveTo(B[0] + dx * 0.25 + nx, B[1] + dy * 0.25 + ny, mx - nx, my - ny, mx, my);
+  ctx.bezierCurveTo(mx + nx * 0.6, my + ny * 0.6, P[0] - dx * 0.2 - nx * 0.5, P[1] - dy * 0.2 - ny * 0.5, P[0], P[1]);
+  ctx.lineWidth = w * 1.5;
+  ctx.strokeStyle = palette.line;
+  ctx.globalAlpha = 0.45;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = w;
+  ctx.strokeStyle = palette.cord;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawEmbryo(ctx, wk, o, beat, anchor) {
+  const c = palette;
+  const t = clamp01((wk - 4) / 4.6);
+  const r = 24, a0 = -2.55, a1 = lerp(2.7, 1.45, t); // the tail shortens as the weeks pass
+  const P = (u, inset = 0) => { const a = lerp(a0, a1, u); return [(r - inset) * Math.cos(a), (r - inset) * Math.sin(a), a]; };
+  const bodyR = lerp(6.5, 10.5, t), tailR = lerp(1.6, 3.2, t), headR = lerp(7.5, 16, t);
+
+  // Yolk sac on its stalk, fading out by week 10.
+  const fade = clamp01((10 - wk) / 2);
+  if (fade > 0) {
+    const belly = P(0.5, bodyR * 0.6);
+    const Y = [-r * 1.25, r * 0.2];
+    const yr = lerp(6, 8, t);
+    ctx.save();
+    ctx.globalAlpha = fade;
+    ctx.strokeStyle = c.cord; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(belly[0], belly[1]); ctx.lineTo(Y[0], Y[1]); ctx.stroke();
+    ctx.fillStyle = c.line; ctx.beginPath(); ctx.arc(Y[0], Y[1], yr + o, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = c.yolk; ctx.beginPath(); ctx.arc(Y[0], Y[1], yr, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  if (anchor && wk >= 6.5) cord(ctx, P(0.55, bodyR * 0.7), anchor, 2);
+
+  // Curled body: a tapering tube along an arc, with the head at the top.
+  const parts = [];
+  for (let i = 0; i <= 48; i++) {
+    const u = 0.08 + (i / 48) * 0.92;
+    const [x, y] = P(u);
+    parts.push({ type: 'circle', x, y, r: lerp(bodyR, tailR, smooth((u - 0.4) / 0.6)) });
+  }
+  const head = P(0.04, lerp(0, 5, t));
+  parts.push({ type: 'circle', x: head[0], y: head[1], r: headR });
+  drawParts(ctx, parts, o);
+
+  // Arm and leg buds that grow into paddles.
+  const buds = [];
+  const bud = (u, start, len, w) => {
+    const g = clamp01((wk - start) / 2.4);
+    if (g <= 0) return;
+    const [bx, by, a] = P(u, bodyR * 0.5);
+    const d = a + Math.PI * 0.72, L = len * g;
+    const tip = [bx + Math.cos(d) * L, by + Math.sin(d) * L];
+    buds.push({ type: 'limb', pts: [[bx, by], tip], w: w * lerp(0.75, 1, g) });
+    if (wk > 7.3) buds.push({ type: 'circle', x: tip[0], y: tip[1], r: w * 0.62 });
+  };
+  bud(0.34, 5.8, 11, 5);
+  bud(0.66, 6.3, 9, 5.5);
+  if (buds.length) drawParts(ctx, buds, o);
+
+  // Beating heart, then the eye.
+  if (wk >= 5 && wk < 9.5) {
+    const hp = P(0.28, bodyR * 0.55);
+    ctx.globalAlpha = 0.85 * clamp01(9.5 - wk);
+    ctx.fillStyle = c.heart;
+    ctx.beginPath(); ctx.arc(hp[0], hp[1], lerp(3, 5, t) * (1 + 0.18 * beat), 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  if (wk >= 6) {
+    const len = Math.hypot(head[0], head[1]) || 1;
+    const ex = head[0] - (head[0] / len) * headR * 0.42, ey = head[1] - (head[1] / len) * headR * 0.42;
+    ctx.fillStyle = c.detail;
+    ctx.beginPath(); ctx.arc(ex, ey, lerp(1.4, 2.8, clamp01((wk - 6) / 3)), 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+function face(ctx, wk, H, R) {
+  const c = palette;
+  ctx.lineCap = 'round';
+  const ex = H[0] - R * 0.45, ey = H[1] - R * 0.02;
+  ctx.fillStyle = c.detail;
+  ctx.strokeStyle = c.detail;
+  if (wk < 14) { ctx.beginPath(); ctx.arc(ex, ey, R * 0.12, 0, Math.PI * 2); ctx.fill(); }          // eye shows as a dark spot
+  else if (wk < 27) { ctx.lineWidth = R * 0.08; ctx.beginPath(); ctx.arc(ex, ey - R * 0.05, R * 0.17, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke(); } // closed lid
+  else {                                                                                               // eyes open from about week 26
+    ctx.beginPath(); ctx.arc(ex, ey, R * 0.1, 0, Math.PI * 2); ctx.fill();
+    ctx.lineWidth = R * 0.07; ctx.beginPath(); ctx.arc(ex, ey + R * 0.04, R * 0.2, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+  }
+  if (wk >= 12) {
+    ctx.strokeStyle = c.line; ctx.lineWidth = R * 0.08;
+    ctx.beginPath(); ctx.arc(H[0] + R * 0.2, H[1] + R * 0.08, R * 0.2, -Math.PI * 0.4, Math.PI * 0.55); ctx.stroke();
+    ctx.strokeStyle = c.detail; ctx.lineWidth = R * 0.07;
+    ctx.beginPath(); ctx.arc(H[0] - R * 0.66, H[1] + R * 0.5, R * 0.11, Math.PI * 0.1, Math.PI * 0.8); ctx.stroke();
+  }
+  if (wk >= 26) { ctx.fillStyle = c.blush; ctx.beginPath(); ctx.arc(H[0] - R * 0.42, H[1] + R * 0.38, R * 0.2, 0, Math.PI * 2); ctx.fill(); }
+}
+
+function drawFetus(ctx, wk, o, anchor) {
+  const p = clamp01((wk - 9) / 31), q = Math.sqrt(p);
+  const R = 17;                                  // head radius
+  const ry = R * lerp(1.1, 2.0, q);              // the body grows faster than the head
+  const rx = R * lerp(0.75, 1.15, p);
+  const fat = lerp(0.78, 1.2, p), lim = lerp(0.55, 1, q);
+  const rot = -0.42, cr = Math.cos(rot), sr = Math.sin(rot), T = [7, 7];
+  const rp = (dx, dy) => [T[0] + dx * cr - dy * sr, T[1] + dx * sr + dy * cr];
+  const H = rp(-rx * 0.35, -ry - R * 0.55);
+  H[0] -= 3;
+
+  const back = [{ type: 'ellipse', x: T[0], y: T[1], rx, ry, rot }, { type: 'circle', x: H[0], y: H[1], r: R }];
+  if (wk >= 14) back.push({ type: 'circle', x: H[0] - R * 0.93, y: H[1] + R * 0.2, r: R * 0.14 }); // nose
+  drawParts(ctx, back, o);
+  if (anchor) cord(ctx, rp(-rx * 0.95, ry * 0.18), anchor, 2.6);
+  face(ctx, wk, H, R);
+
+  const hip = rp(-rx * 0.1, ry * 0.62);
+  const K = [hip[0] - 26 * lim, hip[1] - 12 * lim];
+  const A = [K[0] + 7 * lim, K[1] + 19 * lim];
+  const F = [A[0] - 9 * lim, A[1] + 2.5];
+  drawParts(ctx, [
+    { type: 'limb', pts: [hip, K], w: 12 * fat },
+    { type: 'limb', pts: [K, A], w: 8.5 * fat },
+    { type: 'limb', pts: [A, F], w: 6 * fat }
+  ], o);
+
+  const S = rp(-rx * 0.45, -ry * 0.58);
+  const E = [S[0] - 3 * lim, S[1] + 14 * lim];
+  const Hn = [E[0] - 11 * lim, E[1] - 11 * lim];
+  drawParts(ctx, [
+    { type: 'limb', pts: [S, E], w: 7.5 * fat },
+    { type: 'limb', pts: [E, Hn], w: 6.5 * fat },
+    { type: 'circle', x: Hn[0], y: Hn[1], r: 4.2 * fat }
+  ], o);
+}
+
+function drawScene(cv, wk, t) {
+  if (!palette) readPalette();
+  const size = Math.round(cv.clientWidth) || 260;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const px = Math.round(size * dpr);
+  if (cv.width !== px) { cv.width = px; cv.height = px; }
+  const ctx = cv.getContext('2d');
+  const c = palette;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, size, size);
+  const cx = size / 2, cy = size / 2, RS = size * 0.47;
+
+  // Amniotic sac.
+  const g = ctx.createRadialGradient(cx - RS * 0.3, cy - RS * 0.35, RS * 0.08, cx, cy, RS);
+  g.addColorStop(0, c.womb1);
+  g.addColorStop(1, c.womb2);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(cx, cy, RS, 0, Math.PI * 2); ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = c.edge; ctx.stroke();
+
+  // Placenta, growing from about week 5.
+  let anchor = null;
+  const pl = smooth((wk - 5) / 7);
+  if (pl > 0) {
+    const th = lerp(3, RS * 0.15, pl);
+    ctx.beginPath(); ctx.arc(cx, cy, RS - th / 2 - 1, -Math.PI * 0.97, -Math.PI * 0.66);
+    ctx.lineWidth = th; ctx.lineCap = 'round'; ctx.strokeStyle = c.placenta; ctx.stroke();
+    const a = -Math.PI * 0.8, rr = RS - th * 0.9;
+    anchor = [cx + rr * Math.cos(a), cy + rr * Math.sin(a)];
+  }
+
+  // The baby, floating gently.
+  const float = Math.sin(t * Math.PI * 0.5) * 2;
+  const beat = Math.pow(Math.max(0, Math.sin(t * Math.PI * 2 * 2.3)), 6);
+  const embryo = wk < 9;
+  // Fit the whole baby (including when it turns) inside the sac.
+  const box = embryo ? { c: [-2, -2], h: 72 } : { c: [-4, -4], h: lerp(84, 100, clamp01((wk - 9) / 31)) };
+  const s = (curve(wk, SIZE_CURVE) * RS * 2) / box.h;
+  const rot = embryo ? 0 : Math.PI * 0.95 * smooth((wk - 32.3) / 1.2);
+  ctx.save();
+  ctx.translate(cx, cy + float);
+  ctx.rotate(rot);
+  ctx.scale(s, s);
+  ctx.translate(-box.c[0], -box.c[1]);
+  let local = null;
+  if (anchor) {
+    const dx = anchor[0] - cx, dy = anchor[1] - cy - float;
+    const cr = Math.cos(-rot), sr = Math.sin(-rot);
+    local = [box.c[0] + (dx * cr - dy * sr) / s, box.c[1] + (dx * sr + dy * cr) / s];
+  }
+  const o = 1.3 / s;
+  if (embryo) drawEmbryo(ctx, wk, o, beat, local); else drawFetus(ctx, wk, o, local);
+  ctx.restore();
+}
+
+let artFrame = 0;
+function startArt() {
+  cancelAnimationFrame(artFrame);
+  const list = [...document.querySelectorAll('canvas.fetus')];
+  if (!list.length) return;
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const frame = (now) => {
+    list.forEach((cv) => { if (cv.isConnected) drawScene(cv, Number(cv.dataset.week), still ? 0 : now / 1000); });
+    if (!still) artFrame = requestAnimationFrame(frame);
+  };
+  frame(performance.now());
+}
+const refreshArt = () => { palette = null; startArt(); };
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refreshArt);
+new MutationObserver(refreshArt).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+window.addEventListener('resize', () => startArt());
+
+function fetusCanvas(week, label) {
+  return `<canvas class="fetus" width="560" height="560" data-week="${week}" role="img" aria-label="${label}"></canvas>`;
+}
+// ---------- shared pieces ----------
+const TRI = ['', 'الثلث الأول', 'الثلث الثاني', 'الثلث الثالث'];
+let formMethod = 'due';
+let selectedWeek = null;
+
+function gaText(weeks, days) {
+  const w = weeks > 0 ? plural(weeks, WEEKS_W) : '';
+  const d = days > 0 ? plural(days, DAYS_W) : '';
+  if (w && d) return `${w} و${d}`;
+  return w || d || 'اليوم الأول';
+}
+
+function dateForm(where) {
+  const value = formMethod === 'lmp' ? state.lmp : state.due;
+  return `
+  <form class="card" id="dateForm" novalidate>
+    <h2>${where === 'welcome' ? 'خلّينا نبدأ' : 'تاريخ الحمل'}</h2>
+    <div class="seg" role="group" aria-label="طريقة الحساب">
+      <button type="button" data-method="weeks" aria-pressed="${formMethod === 'weeks'}">كم أسبوع</button>
+      <button type="button" data-method="due" aria-pressed="${formMethod === 'due'}">موعد الولادة</button>
+      <button type="button" data-method="lmp" aria-pressed="${formMethod === 'lmp'}">آخر دورة</button>
+    </div>
+    ${formMethod === 'weeks' ? weeksFields() : `<div class="field">
+      <label for="dateInput">${formMethod === 'lmp' ? 'أول يوم من آخر دورة' : 'موعد الولادة المتوقع (اللي قالته الطبيبة)'}</label>
+      <input type="date" id="dateInput" value="${esc(value)}" required>
+    </div>`}
+    <p class="error" id="dateError" role="alert"></p>
+    <button type="submit" class="btn block">${where === 'welcome' ? 'ابدئي' : 'حفظ التاريخ'}</button>
+  </form>`;
+}
+
+function weeksFields() {
+  const j = journey();
+  const w0 = j ? Math.min(42, Math.max(0, j.weeks)) : 6, d0 = j ? Math.max(0, j.days) : 0;
+  const opts = (n, sel) => Array.from({ length: n }, (_, i) => `<option value="${i}"${i === sel ? ' selected' : ''}>${i}</option>`).join('');
+  return `<div class="row">
+      <div class="field"><label for="gaWeeks">الأسابيع المكتملة</label><select id="gaWeeks">${opts(43, w0)}</select></div>
+      <div class="field"><label for="gaDays">والأيام</label><select id="gaDays">${opts(7, d0)}</select></div>
+    </div>
+    <p class="muted small">مثلًا إذا داخلة الأسبوع السابع وما تعرفين الأيام بالضبط، اختاري 6 أسابيع و0 أيام.</p>`;
+}
+
+// The illustration, the size comparison and what is happening this week.
+function babyBlock(w, artWeek, wkNum) {
+  return `
+    <div class="fetus-wrap">
+      ${fetusCanvas(artWeek.toFixed(2), `رسم توضيحي لشكل الجنين في الأسبوع ${wkNum}`)}
+      <p class="caption">رسم توضيحي تقريبي</p>
+    </div>
+    <p class="size-line"><span class="emoji" aria-hidden="true">${w[0]}</span><strong>بحجم ${w[1]}</strong></p>
+    <p class="muted" style="text-align:center">${w[4]}</p>`;
+}
+
+function upcomingAppts() {
+  const today = todayISO();
+  return state.appts.filter((a) => a.date >= today).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+}
+
+function dateBadge(iso) {
+  const day = Number(iso.slice(8, 10));
+  return `<div class="date-badge" aria-hidden="true"><div class="d num">${day}</div><div class="m">${F_MON.format(toUTC(iso))}</div></div>`;
+}
+
+// ---------- welcome ----------
+function viewWelcome() {
+  return `
+  <section class="welcome">
+    <p class="hello">أهلًا ${esc(state.name || 'عبير')}</p>
+    <p class="lead">هذا تطبيقك تتابعين فيه حملك أسبوع بأسبوع: حجم البيبي وتطوّره، عدّاد الركلات والطلق، مواعيدك، وزنك، وشنطة المستشفى.</p>
+    ${dateForm('welcome')}
+    <p class="muted small">التاريخ يبقى عندك، وتقدرين تغيّرينه من الإعدادات بأي وقت.</p>
+  </section>`;
+}
+
+// ---------- today ----------
+function viewToday(j) {
+  const wk = Math.min(40, Math.max(4, j.weeks));
+  const w = weekData(j.weeks);
+  const circ = +(2 * Math.PI * 58).toFixed(2);
+  const left = j.left > 0 ? `باقي ${plural(j.left, DAYS_W)}` : j.left === 0 ? 'اليوم موعد الولادة المتوقع' : `تجاوزتِ الموعد بـ ${plural(-j.left, DAYS_W)}`;
+  const next = upcomingAppts()[0];
+  const babyTitle = state.baby ? `${esc(state.baby)} هذا الأسبوع` : 'البيبي هذا الأسبوع';
+  let extra = '';
+  if (j.weeks < 4) extra = '<p class="note">الأسابيع الأولى تنحسب من أول يوم في آخر دورة، فالبيبي لسا في بدايته. هذي معلومات الأسبوع الرابع.</p>';
+  if (j.weeks > 40) extra = '<p class="note warn"><strong>تجاوزتِ الأسبوع 40.</strong> تابعي مع طبيبتك عشان تقرر الخطوة الجاية.</p>';
+
+  return `
+  <section class="hero" aria-label="ملخص الحمل">
+    <div class="ring">
+      <svg viewBox="0 0 132 132" aria-hidden="true">
+        <circle class="track" cx="66" cy="66" r="58" fill="none" stroke-width="12"/>
+        <circle class="fill" cx="66" cy="66" r="58" fill="none" stroke-width="12" stroke-dasharray="${circ}" stroke-dashoffset="${(circ * (1 - j.progress)).toFixed(2)}"/>
+      </svg>
+      <div class="center"><span class="wk">${Math.max(0, j.weeks)}</span><span class="wk-label">أسبوع</span></div>
+    </div>
+    <div class="hero-text">
+      <p class="eyebrow">${fmtDayMonth(todayISO())}</p>
+      <p class="big">${gaText(Math.max(0, j.weeks), Math.max(0, j.days))}</p>
+      <p class="small"><strong>يعني داخلة في الأسبوع ${Math.max(0, j.weeks) + 1}</strong></p>
+      <div class="chips"><span class="chip">${TRI[j.tri]}</span><span class="chip apricot">${left}</span></div>
+      <p class="muted small">موعد الولادة المتوقع: ${fmtDate(j.due)}</p>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="babyTitle">
+    <div class="card-head"><h2 id="babyTitle">${babyTitle}</h2><span class="chip leaf">${plural(wk, WEEKS_W)}</span></div>
+    ${babyBlock(w, Math.min(40.9, Math.max(4, j.weeks + j.days / 7)), wk)}
+    <div class="stats">
+      <div class="stat"><div class="v">${w[2]}</div><div class="k">الطول تقريبًا</div></div>
+      <div class="stat"><div class="v">${w[3]}</div><div class="k">الوزن تقريبًا</div></div>
+    </div>
+    ${extra}
+  </section>
+
+  ${todayFoodCard(j)}
+
+  <section class="card">
+    <p class="eyebrow">نصيحة لك هالأسبوع</p>
+    <p>${tipFor(j.weeks)}</p>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>موعدك الجاي</h2><a class="chip" href="#tracker">كل المواعيد</a></div>
+    ${next ? `<ul class="list"><li>${dateBadge(next.date)}<div class="grow"><p class="title">${esc(next.title)}</p><p class="muted small">${fmtDayMonth(next.date)}${next.time ? ' · ' + fmtClock(next.time) : ''}</p></div></li></ul>`
+      : '<p class="empty">ما عندك مواعيد جاية. أضيفيها من «متابعتي» عشان تطلع لك هنا.</p>'}
+  </section>
+
+  <details class="card">
+    <summary>متى تكلّمين الطبيبة أو تروحين الطوارئ فورًا؟</summary>
+    <ul class="signs">${WARNING_SIGNS.map((s) => `<li>${s}</li>`).join('')}</ul>
+    <p class="muted small">هذا التطبيق للمتابعة فقط وما يغني عن طبيبتك.</p>
+  </details>`;
+}
+
+// ---------- weeks ----------
+function viewWeeks(j) {
+  const current = j ? Math.min(40, Math.max(4, j.weeks)) : 4;
+  const wk = selectedWeek || current;
+  const w = WEEKS[wk];
+  const tri = wk < 14 ? 1 : wk < 28 ? 2 : 3;
+  let chips = '';
+  for (let n = 4; n <= 40; n++) {
+    chips += `<button type="button" class="wk-chip${j && n === current ? ' now' : ''}" data-week="${n}" aria-pressed="${n === wk}" aria-label="الأسبوع ${n}"><span class="emoji" aria-hidden="true">${WEEKS[n][0]}</span><span class="n">${n}</span></button>`;
+  }
+  const range = j ? `<p class="muted small">من ${fmtDayMonth(addDays(j.lmp, wk * 7))} إلى ${fmtDayMonth(addDays(j.lmp, wk * 7 + 6))}</p>` : '';
+  return `
+  <section class="card">
+    <h2>دليل الأسابيع</h2>
+    <div class="weeks" role="group" aria-label="اختاري الأسبوع">${chips}</div>
+  </section>
+  <section class="card" aria-live="polite">
+    <div class="card-head">
+      <h2>الأسبوع ${wk}</h2>
+      <div class="chips"><span class="chip">${TRI[tri]}</span>${j && wk === current ? '<span class="chip apricot">أنتِ هنا</span>' : ''}</div>
+    </div>
+    ${range}
+    ${babyBlock(w, wk + 0.3, wk)}
+    <div class="stats">
+      <div class="stat"><div class="v">${w[2]}</div><div class="k">الطول تقريبًا</div></div>
+      <div class="stat"><div class="v">${w[3]}</div><div class="k">الوزن تقريبًا</div></div>
+    </div>
+    <p class="note"><strong>لك:</strong> ${tipFor(wk)}</p>
+  </section>
+  <p class="muted small">أرقام الأسابيع هنا بعدد الأسابيع المكتملة: مثلًا 6 أسابيع و3 أيام يعني داخلة في الأسبوع 7.</p>
+  <p class="muted small">الأطوال والأوزان متوسطات تقريبية، وكل بيبي ينمو بطريقته. قبل الأسبوع 20 ينقاس الطول من الراس للمقعدة، وبعده من الراس للكعب.</p>`;
+}
+// ---------- daily food ----------
+let foodDay = 0; // 0 = today, 1 = tomorrow
+
+// One focus nutrient per day, in turn, from the nutrients this stage of growth needs most;
+// each meal is picked from the ones rich in that nutrient, cycling so the menu changes.
+function dayPlan(j, offset) {
+  const ga = Math.max(0, j.ga + offset);
+  const weeks = Math.floor(ga / 7);
+  const stage = FOOD_STAGES.filter(([from]) => weeks >= from).pop();
+  const L = stage[2].length;
+  const focus = stage[2][ga % L];
+  // Fish on three days a week (FDA/EPA: 2-3 servings), oily fish at most twice (NHS), one fish meal a day.
+  const day = ga % 7;
+  const fishSlot = { 1: 'lunch', 3: 'dinner', 5: 'dinner' }[day] || null;
+  const allowOily = day !== 3;
+  // At most one egg dish a day, for variety.
+  const isEgg = (m) => /بيض|بيضة|عجة|شكشوكة/.test(m[0]);
+  let eggUsed = false;
+  const pick = (pool, salt, slot) => {
+    const wantFish = slot === fishSlot;
+    let list = pool.filter((m) => (wantFish ? m[2] === 'fish' || (allowOily && m[2] === 'oily') : !m[2]));
+    if (!list.length) list = pool.filter((m) => !m[2]);
+    if (eggUsed && list.some((m) => !isEgg(m))) list = list.filter((m) => !isEgg(m));
+    const good = list.filter(([, n]) => n.includes(focus));
+    const from = good.length ? good : list;
+    const choice = from[(Math.floor(ga / L) + salt) % from.length];
+    if (isEgg(choice)) eggUsed = true;
+    return choice;
+  };
+  return {
+    ga, weeks, stage, focus,
+    meals: [
+      ['الفطور', pick(BREAKFAST, 0, 'breakfast')],
+      ['الغدا', pick(LUNCH, 1, 'lunch')],
+      ['العشا', pick(DINNER, 2, 'dinner')],
+      ['سناك', pick(SNACKS, 3, 'snack')]
+    ]
+  };
+}
+
+function mealRow([label, [text, ns]], focus) {
+  return `<div class="meal"><div class="when">${label}</div><div><p class="what">${text}</p>
+    <div class="tags">${ns.map((n) => `<span class="tag${n === focus ? ' focus' : ''}">${NUTRIENTS[n][0]}</span>`).join('')}</div></div></div>`;
+}
+
+function todayFoodCard(j) {
+  const plan = dayPlan(j, 0);
+  return `
+  <section class="card">
+    <div class="card-head"><h2>أكل اليوم</h2><span class="chip">${NUTRIENTS[plan.focus][0]}</span></div>
+    <p class="muted small">البيبي هالفترة ${plan.stage[1]}.</p>
+    <div>${plan.meals.map((m) => mealRow(m, plan.focus)).join('')}</div>
+    <a class="btn ghost block" href="#food" style="display:grid;place-items:center;text-decoration:none">ليش هالأكل؟ وتفاصيل أكثر</a>
+  </section>`;
+}
+
+function viewFood(j) {
+  const plan = dayPlan(j, foodDay);
+  const [name, why] = NUTRIENTS[plan.focus];
+  const when = foodDay ? 'بكرة' : 'اليوم';
+  const tri = plan.weeks < 14 ? 1 : plan.weeks < 28 ? 2 : 3;
+  const extras = FOOD_EXTRA.filter(([a, b]) => plan.weeks >= a && plan.weeks <= b);
+  const list = (items) => `<ul class="bullets">${items.map((x) => `<li>${x}</li>`).join('')}</ul>`;
+  return seg('food', String(foodDay), [['0', 'أكل اليوم'], ['1', 'أكل بكرة']]) + `
+  <section class="card focus-card">
+    <p class="eyebrow">${fmtDayMonth(addDays(todayISO(), foodDay))} · ${gaText(plan.weeks, plan.ga % 7)}</p>
+    <h2>تركيز ${when}: ${name}</h2>
+    <p>البيبي هالفترة ${plan.stage[1]}، و${name} ${why}.</p>
+  </section>
+  <section class="card">
+    <h2>قائمة ${when}</h2>
+    <div>${plan.meals.map((m) => mealRow(m, plan.focus)).join('')}</div>
+    <p class="muted small">القائمة تتغيّر كل يوم حسب أسبوعك. إذا ما تشتهين أكلة، بدّليها بأكلة ثانية فيها نفس العنصر.</p>
+  </section>
+  <section class="card">
+    <h2>كل يوم</h2>
+    ${list([CALORIES[tri], ...FOOD_HABITS])}
+  </section>
+  <section class="card">
+    <h2>السمك والتونة</h2>
+    ${list(FISH_ADVICE)}
+  </section>
+  ${extras.map(([, , title, pts]) => `<section class="card"><h2>${title}</h2>${list(pts)}</section>`).join('')}
+  <details class="card">
+    <summary>أكلات تتجنّبينها في الحمل</summary>
+    ${list(FOOD_AVOID)}
+  </details>
+  <p class="muted small">إذا عندك سكر الحمل أو حساسية من أكل أو أي حالة صحية، اتبعي نظام طبيبتك أو أخصائية التغذية.</p>`;
+}
+// ---------- delete with a second tap to confirm ----------
+let armed = null;
+let armedTimer = 0;
+function delBtn(kind, id) {
+  const key = `${kind}:${id}`;
+  const on = armed === key;
+  return `<button type="button" class="del${on ? ' confirm' : ''}" data-del="${key}">${on ? 'متأكدة؟ احذفي' : 'حذف'}</button>`;
+}
+
+function seg(name, value, options) {
+  return `<div class="seg" role="group">${options.map(([v, label]) =>
+    `<button type="button" data-seg="${name}" data-value="${v}" aria-pressed="${value === v}">${label}</button>`).join('')}</div>`;
+}
+
+// ---------- counters ----------
+let counterTab = 'kicks';
+
+function viewCounters(j) {
+  return seg('counter', counterTab, [['kicks', 'الركلات'], ['contractions', 'الطلق']]) +
+    (counterTab === 'kicks' ? kicksView(j) : contractionsView());
+}
+
+function kicksView(j) {
+  const s = state.kickSession;
+  const early = j && j.weeks < 24
+    ? '<p class="muted small">غالبًا تبدأ الحركة تنحس بين الأسبوع 16 و24، ومتابعة نمطها كل يوم تصير أهم من الأسبوع 28.</p>' : '';
+  const past = state.kicks.slice().reverse().slice(0, 12);
+  return `
+  <section class="card">
+    <h2>عدّاد الركلات</h2>
+    <p class="muted">${s ? 'اضغطي الزر مع كل حركة تحسينها: ركلة، لفّة، أو رفرفة.' : 'اختاري وقت يكون فيه البيبي نشيط عادة، وابدئي الجلسة.'}</p>
+    <button type="button" class="tap" id="kickTap">
+      ${s ? `<span class="count">${s.count}</span><span class="lbl">حسّيت بحركة</span>` : '<span class="lbl">ابدئي الجلسة</span>'}
+    </button>
+    ${s ? `<p class="timer" id="kickTimer" aria-label="مدة الجلسة">${mmss(Date.now() - s.start)}</p>
+    <div class="row"><button type="button" class="btn" id="kickSave">إنهاء وحفظ</button><button type="button" class="btn ghost" id="kickCancel">إلغاء الجلسة</button></div>` : ''}
+    <p class="note warn"><strong>مهم:</strong> اعرفي النمط المعتاد لحركة البيبي. إذا حسّيتي إن الحركة قلّت أو تغيّرت، كلّمي طبيبتك أو روحي الطوارئ على طول، ولا تنتظرين لبكرة.</p>
+    ${early}
+  </section>
+  <section class="card">
+    <h2>الجلسات السابقة</h2>
+    ${past.length ? `<ul class="list">${past.map((k) => `
+      <li><div class="grow"><p class="title">${plural(k.count, ['حركة واحدة', 'حركتين', 'حركات', 'حركة'])} في ${mmss(k.end - k.start)}</p><p class="muted small">${fmtStamp(k.start)}</p></div>${delBtn('kicks', k.id)}</li>`).join('')}</ul>`
+      : '<p class="empty">لما تحفظين أول جلسة بتطلع هنا.</p>'}
+  </section>`;
+}
+
+function contractionsView() {
+  const r = state.running;
+  const list = state.contractions.slice().sort((a, b) => a.start - b.start);
+  const hourAgo = Date.now() - 3600000;
+  const lastHour = list.filter((c) => c.start >= hourAgo);
+  const avg = (arr) => arr.reduce((t, x) => t + x, 0) / arr.length;
+  const durations = lastHour.map((c) => c.end - c.start);
+  const gaps = [];
+  for (let i = 1; i < lastHour.length; i++) gaps.push(lastHour[i].start - lastHour[i - 1].start);
+  const rows = list.slice(-12).reverse().map((c) => {
+    const i = list.indexOf(c);
+    const gap = i > 0 ? mmss(c.start - list[i - 1].start) : '—';
+    return `<tr><td>${fmtTime(c.start)}</td><td class="num">${mmss(c.end - c.start)}</td><td class="num">${gap}</td></tr>`;
+  }).join('');
+  return `
+  <section class="card">
+    <h2>عدّاد الطلق</h2>
+    <p class="muted">اضغطي أول ما يبدأ الطلق، واضغطي مرة ثانية لما يخلص.</p>
+    <button type="button" class="tap${r ? ' running' : ''}" id="contractTap">
+      ${r ? `<span class="count" id="contractLive">${mmss(Date.now() - r)}</span><span class="lbl">خلص الطلق</span>`
+        : `<span class="count">${lastHour.length}</span><span class="lbl">بدأ الطلق</span>`}
+    </button>
+    <p class="muted small" style="text-align:center">${r ? 'الطلق شغّال الحين' : 'عدد الطلقات في آخر ساعة'}</p>
+    <div class="stats">
+      <div class="stat"><div class="v">${durations.length ? mmss(avg(durations)) : '—'}</div><div class="k">متوسط مدة الطلقة (آخر ساعة)</div></div>
+      <div class="stat"><div class="v">${gaps.length ? mmss(avg(gaps)) : '—'}</div><div class="k">متوسط الفاصل بين الطلقات</div></div>
+    </div>
+    <p class="note">كثير من الأطباء ينصحون في الولادة الأولى بالتوجّه للمستشفى إذا صار الطلق كل 5 دقايق أو أقل، ويستمر حوالي دقيقة، لمدة ساعة. لكن تعليمات طبيبتك هي الأهم.</p>
+    <p class="note warn"><strong>روحي على طول</strong> إذا نزل ماء أو دم، أو قلّت حركة البيبي، أو جاك طلق منتظم قبل الأسبوع 37.</p>
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>السجل</h2>${list.length ? delBtn('contractions', 'all') : ''}</div>
+    ${rows ? `<div class="table-wrap"><table><thead><tr><th>البداية</th><th>المدة</th><th>الفاصل</th></tr></thead><tbody>${rows}</tbody></table></div>`
+      : '<p class="empty">ما فيه طلقات مسجلة.</p>'}
+  </section>`;
+}
+
+// ---------- appointments & weight ----------
+let trackerTab = 'appts';
+
+function viewTracker() {
+  return seg('tracker', trackerTab, [['appts', 'المواعيد'], ['weight', 'الوزن'], ['bag', 'الشنطة']]) +
+    (trackerTab === 'appts' ? apptsView() : trackerTab === 'weight' ? weightView() : viewBag());
+}
+
+function apptItem(a, past) {
+  return `<li class="${past ? 'past' : ''}">${dateBadge(a.date)}<div class="grow"><p class="title">${esc(a.title)}</p>
+    <p class="muted small">${fmtDayMonth(a.date)}${a.time ? ' · ' + fmtClock(a.time) : ''}</p>${a.note ? `<p class="small">${esc(a.note)}</p>` : ''}</div>${delBtn('appts', a.id)}</li>`;
+}
+
+function apptsView() {
+  const up = upcomingAppts();
+  const past = state.appts.filter((a) => a.date < todayISO()).sort((a, b) => b.date.localeCompare(a.date));
+  return `
+  <form class="card" id="apptForm" novalidate>
+    <h2>موعد جديد</h2>
+    <div class="field"><label for="apptTitle">وش الموعد؟</label><input id="apptTitle" maxlength="80" placeholder="مثلًا: مراجعة الطبيبة، تحليل السكر" required></div>
+    <div class="row">
+      <div class="field"><label for="apptDate">التاريخ</label><input type="date" id="apptDate" value="${todayISO()}" required></div>
+      <div class="field"><label for="apptTime">الوقت (اختياري)</label><input type="time" id="apptTime"></div>
+    </div>
+    <div class="field"><label for="apptNote">ملاحظة (اختياري)</label><input id="apptNote" maxlength="160" placeholder="مثلًا: أكون صايمة، أجيب ملف الحمل"></div>
+    <p class="error" id="apptError" role="alert"></p>
+    <button type="submit" class="btn block">إضافة الموعد</button>
+  </form>
+  <section class="card">
+    <h2>المواعيد الجاية</h2>
+    ${up.length ? `<ul class="list">${up.map((a) => apptItem(a, false)).join('')}</ul>` : '<p class="empty">ما فيه مواعيد جاية.</p>'}
+  </section>
+  ${past.length ? `<details class="card"><summary>المواعيد السابقة (${past.length})</summary><ul class="list">${past.map((a) => apptItem(a, true)).join('')}</ul></details>` : ''}`;
+}
+
+function weightChart(points) {
+  const W = 320, H = 160, L = 36, R = 12, T = 12, B = 24;
+  const xs = points.map((p) => toUTC(p.date));
+  const ys = points.map((p) => p.kg);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  const lo = Math.floor(Math.min(...ys) - 1), hi = Math.ceil(Math.max(...ys) + 1);
+  const X = (t) => L + (x1 === x0 ? (W - L - R) / 2 : ((t - x0) / (x1 - x0)) * (W - L - R));
+  const Y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  const pts = points.map((p) => [X(toUTC(p.date)), Y(p.kg)]);
+  const line = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+  const area = `${line} L${pts[pts.length - 1][0].toFixed(1)} ${H - B} L${pts[0][0].toFixed(1)} ${H - B} Z`;
+  const ticks = [lo, (lo + hi) / 2, hi];
+  const short = new Intl.DateTimeFormat(LOC, { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="رسم الوزن عبر الوقت" direction="ltr">
+    ${ticks.map((v) => `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"/><text x="${L - 6}" y="${(Y(v) + 4).toFixed(1)}" text-anchor="end">${+v.toFixed(1)}</text>`).join('')}
+    <path class="area" d="${area}"/><path class="line" d="${line}"/>
+    ${pts.map(([x, y], i) => `<circle class="dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${i === pts.length - 1 ? 5 : 3}"/>`).join('')}
+    <text x="${L}" y="${H - 6}" text-anchor="start">${short.format(x0)}</text>
+    ${x1 !== x0 ? `<text x="${W - R}" y="${H - 6}" text-anchor="end">${short.format(x1)}</text>` : ''}
+  </svg>`;
+}
+
+function weightView() {
+  const pts = state.weights.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const last = pts[pts.length - 1];
+  const change = pts.length > 1 ? +(last.kg - pts[0].kg).toFixed(1) : null;
+  return `
+  <form class="card" id="weightForm" novalidate>
+    <h2>سجّلي وزنك</h2>
+    <div class="row">
+      <div class="field"><label for="wKg">الوزن (كغ)</label><input type="number" id="wKg" inputmode="decimal" step="0.1" min="30" max="250" placeholder="مثلًا 64.5" required></div>
+      <div class="field"><label for="wDate">التاريخ</label><input type="date" id="wDate" value="${todayISO()}" required></div>
+    </div>
+    <p class="error" id="weightError" role="alert"></p>
+    <button type="submit" class="btn block">حفظ الوزن</button>
+  </form>
+  <section class="card">
+    <h2>وزني</h2>
+    ${last ? `<div class="stats">
+      <div class="stat"><div class="v">${last.kg} كغ</div><div class="k">آخر قياس · ${F_LONG.format(toUTC(last.date))}</div></div>
+      <div class="stat"><div class="v">${change === null ? '—' : (change > 0 ? '+' : '') + change + ' كغ'}</div><div class="k">التغيّر من أول قياس</div></div>
+    </div>
+    ${pts.length > 1 ? weightChart(pts) : ''}
+    <ul class="list">${pts.slice().reverse().map((p) => `<li><div class="grow"><p class="title num">${p.kg} كغ</p><p class="muted small">${fmtDate(p.date)}</p></div>${delBtn('weights', p.id)}</li>`).join('')}</ul>`
+      : '<p class="empty">سجّلي أول وزن، وبيطلع لك رسم يوضح التغيّر مع الوقت.</p>'}
+    <p class="muted small">الزيادة المناسبة تختلف حسب وزنك قبل الحمل، وطبيبتك هي اللي تحددها.</p>
+  </section>`;
+}
+
+// ---------- hospital bag ----------
+function viewBag() {
+  const all = BAG.flatMap(([, items]) => items);
+  const done = all.filter(([id]) => state.bag[id]).length;
+  return `
+  <section class="card">
+    <div class="card-head"><h2>شنطة المستشفى</h2><span class="chip leaf num">${done} من ${all.length}</span></div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${all.length}" aria-valuenow="${done}"><i style="width:${(done / all.length) * 100}%"></i></div>
+    <p class="muted small">كثير من الأمهات يجهّزون الشنطة بين الأسبوع 32 و36.</p>
+  </section>
+  ${BAG.map(([group, items]) => `
+  <section class="card">
+    <h2>${group}</h2>
+    <div>${items.map(([id, label]) => `
+      <label class="check${state.bag[id] ? ' done' : ''}"><input type="checkbox" id="bag-${id}" data-bag="${id}" ${state.bag[id] ? 'checked' : ''}><span>${label}</span></label>`).join('')}</div>
+  </section>`).join('')}`;
+}
+// ---------- app lock ----------
+let pinEntry = '';
+let pinFormOpen = false;
+let forgotArmed = false;
+
+function showLock() {
+  if (!state.pin) return;
+  pinEntry = '';
+  forgotArmed = false;
+  $('#lockText').textContent = 'اكتبي الرمز السري';
+  $('#lockForgot').textContent = 'نسيتي الرمز؟';
+  paintDots();
+  $('#lock').hidden = false;
+}
+function paintDots() {
+  [...$('#lockDots').children].forEach((d, i) => d.classList.toggle('on', i < pinEntry.length));
+}
+async function pinPress(k) {
+  if (k === 'del') { pinEntry = pinEntry.slice(0, -1); paintDots(); return; }
+  if (pinEntry.length >= 4) return;
+  pinEntry += k;
+  paintDots();
+  if (pinEntry.length < 4) return;
+  const ok = !!state.pin && (await hashPin(pinEntry, state.pin.salt)) === state.pin.hash;
+  if (ok) { pinEntry = ''; $('#lock').hidden = true; return; }
+  const dots = $('#lockDots');
+  dots.classList.remove('shake');
+  void dots.offsetWidth;
+  dots.classList.add('shake');
+  $('#lockText').textContent = 'الرمز غلط، جربي مرة ثانية';
+  pinEntry = '';
+  setTimeout(paintDots, 250);
+}
+
+// ---------- settings sheet ----------
+let resetArmed = false;
+
+function renderSheet() {
+  $('#sheetPanel').innerHTML = `
+    <div class="card-head">
+      <h2 id="sheetTitle">الإعدادات</h2>
+      <button type="button" class="icon-btn" id="closeSheet" aria-label="إغلاق"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <form class="card" id="namesForm" novalidate>
+      <h2>الأسماء</h2>
+      <div class="field"><label for="momName">اسمك</label><input id="momName" maxlength="30" value="${esc(state.name)}"></div>
+      <div class="field"><label for="babyName">اسم البيبي (اختياري)</label><input id="babyName" maxlength="30" value="${esc(state.baby)}" placeholder="إذا اخترتوا له اسم"></div>
+      <button type="submit" class="btn block">حفظ الأسماء</button>
+    </form>
+    <section class="card">
+      <h2>القفل بالرمز السري</h2>
+      ${state.pin
+        ? `<p class="muted small">القفل مفعّل. التطبيق يطلب الرمز كل ما تفتحينه.</p>
+           <div class="row"><button type="button" class="btn ghost" id="pinChange">تغيير الرمز</button><button type="button" class="btn ghost" id="pinOff">إلغاء القفل</button></div>`
+        : '<p class="muted small">يطلب التطبيق رمز من 4 أرقام كل ما تفتحينه، عشان محد يشوف معلوماتك لو مسك جوالك.</p>'}
+      ${!state.pin || pinFormOpen ? `
+      <form id="pinForm" novalidate style="display:grid;gap:12px">
+        <div class="row">
+          <div class="field"><label for="pin1">الرمز (4 أرقام)</label><input id="pin1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="new-password"></div>
+          <div class="field"><label for="pin2">اكتبي الرمز مرة ثانية</label><input id="pin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="new-password"></div>
+        </div>
+        <p class="error" id="pinError" role="alert"></p>
+        <button type="submit" class="btn block">${state.pin ? 'حفظ الرمز الجديد' : 'تفعيل القفل'}</button>
+      </form>` : ''}
+    </section>
+    ${dateForm('sheet')}
+    <section class="card">
+      <h2>مسح كل البيانات</h2>
+      <p class="muted small">يمسح التاريخ والجلسات والمواعيد والوزن والشنطة من هذا الجهاز ومن حسابك.</p>
+      <button type="button" class="btn ${resetArmed ? 'danger' : 'ghost'} block" id="resetAll">${resetArmed ? 'متأكدة؟ اضغطي مرة ثانية للمسح' : 'مسح كل البيانات'}</button>
+    </section>
+    <p class="muted small">التطبيق للمتابعة والمعلومات العامة، وما يغني عن استشارة طبيبتك.</p>`;
+}
+function openSheet() {
+  formMethod = state.method;
+  resetArmed = false;
+  renderSheet();
+  $('#sheet').hidden = false;
+  $('#closeSheet').focus();
+}
+function closeSheet() {
+  $('#sheet').hidden = true;
+  const b = $('#openSettings');
+  if (!b.hidden) b.focus();
+}
+
+// ---------- router ----------
+const VIEWS = { today: viewToday, weeks: viewWeeks, food: viewFood, counters: viewCounters, tracker: viewTracker };
+const viewFromHash = () => { const h = location.hash.slice(1); return VIEWS[h] ? h : 'today'; };
+
+function render() {
+  const j = journey();
+  $('#tabs').hidden = !j;
+  $('#openSettings').hidden = !j;
+  $('#brandName').textContent = state.name || 'عبير';
+  $('#brandSub').textContent = j ? `${TRI[j.tri]} · ${gaText(Math.max(0, j.weeks), Math.max(0, j.days))}` : 'رحلة الحمل';
+  if (!j) { $('#main').innerHTML = viewWelcome(); startArt(); return; }
+  const view = viewFromHash();
+  document.querySelectorAll('.tabs a').forEach((a) => {
+    if (a.dataset.view === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  $('#main').innerHTML = `<div class="view">${VIEWS[view](j)}</div>`;
+  if (view === 'weeks') {
+    const chip = $('.wk-chip[aria-pressed="true"]');
+    if (chip) chip.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+  startArt();
+}
+
+// ---------- events ----------
+function showError(id, text) { const el = $(id); if (el) el.textContent = text; return !text; }
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('button, [data-week]');
+  if (e.target.id === 'sheet') return closeSheet();
+  if (!t) return;
+  if (t.dataset.pin) { pinPress(t.dataset.pin); return; }
+
+  if (t.dataset.method) {
+    formMethod = t.dataset.method;
+    if (!$('#sheet').hidden) renderSheet(); else render();
+    return;
+  }
+  if (t.dataset.week) { selectedWeek = Number(t.dataset.week); return render(); }
+  if (t.dataset.seg === 'counter') { counterTab = t.dataset.value; return render(); }
+  if (t.dataset.seg === 'tracker') { trackerTab = t.dataset.value; return render(); }
+  if (t.dataset.seg === 'food') { foodDay = Number(t.dataset.value); return render(); }
+
+  if (t.dataset.del) {
+    const key = t.dataset.del;
+    if (armed !== key) {
+      document.querySelectorAll('.del.confirm').forEach((b) => { b.classList.remove('confirm'); b.textContent = 'حذف'; });
+      armed = key;
+      t.classList.add('confirm');
+      t.textContent = 'متأكدة؟ احذفي';
+      clearTimeout(armedTimer);
+      armedTimer = setTimeout(() => { armed = null; t.classList.remove('confirm'); t.textContent = 'حذف'; }, 4000);
+      return;
+    }
+    armed = null;
+    clearTimeout(armedTimer);
+    const [kind, id] = key.split(':');
+    return commit((s) => {
+      if (kind === 'contractions' && id === 'all') s.contractions = [];
+      else s[kind] = s[kind].filter((x) => x.id !== id);
+    }, 'انحذف');
+  }
+
+  switch (t.id) {
+    case 'kickTap':
+      return commit((s) => {
+        if (!s.kickSession) s.kickSession = { start: Date.now(), count: 0 };
+        else s.kickSession.count += 1;
+      });
+    case 'kickSave': {
+      const ks = state.kickSession;
+      if (!ks) return;
+      if (ks.count === 0) return commit((s) => { s.kickSession = null; }, 'ما انحفظت الجلسة لأنك ما سجلتي أي حركة');
+      return commit((s) => { s.kicks.push({ id: newId(), start: ks.start, end: Date.now(), count: ks.count }); s.kickSession = null; }, 'انحفظت الجلسة');
+    }
+    case 'kickCancel':
+      return commit((s) => { s.kickSession = null; }, 'انلغت الجلسة');
+    case 'contractTap':
+      return commit((s) => {
+        if (s.running) { s.contractions.push({ id: newId(), start: s.running, end: Date.now() }); s.running = null; }
+        else s.running = Date.now();
+      });
+    case 'openSettings': return openSheet();
+    case 'closeSheet': return closeSheet();
+    case 'pinChange': pinFormOpen = true; return renderSheet();
+    case 'pinOff':
+      pinFormOpen = false;
+      commit((s) => { s.pin = null; }, 'انلغى القفل');
+      return renderSheet();
+    case 'lockForgot':
+      if (!forgotArmed) {
+        forgotArmed = true;
+        $('#lockText').textContent = 'إذا نسيتي الرمز، الحل الوحيد إنك تمسحين كل بيانات التطبيق وتبدين من جديد.';
+        t.textContent = 'امسحي كل شي وابدئي من جديد';
+        return;
+      }
+      state = blank();
+      state.updatedAt = Date.now();
+      saveLocal();
+      scheduleRemote();
+      formMethod = 'weeks';
+      $('#lock').hidden = true;
+      history.replaceState(null, '', location.pathname + location.search);
+      render();
+      return toast('انمسحت البيانات، تقدرين تبدين من جديد');
+    case 'resetAll':
+      if (!resetArmed) { resetArmed = true; return renderSheet(); }
+      state = blank();
+      state.updatedAt = Date.now();
+      saveLocal();
+      scheduleRemote();
+      resetArmed = false;
+      closeSheet();
+      history.replaceState(null, '', location.pathname + location.search);
+      render();
+      return toast('انمسحت كل البيانات');
+  }
+});
+
+document.addEventListener('change', (e) => {
+  const id = e.target.dataset && e.target.dataset.bag;
+  if (!id) return;
+  const on = e.target.checked;
+  commit((s) => { if (on) s.bag[id] = true; else delete s.bag[id]; });
+});
+
+document.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === 'dateForm') {
+    // "How many weeks" is saved as the matching first day of the last period, so it keeps counting.
+    const method = formMethod === 'weeks' ? 'lmp' : formMethod;
+    const value = formMethod === 'weeks'
+      ? addDays(todayISO(), -(Number($('#gaWeeks').value) * 7 + Number($('#gaDays').value)))
+      : $('#dateInput').value;
+    if (!showError('#dateError', checkDate(method, value))) return;
+    const inSheet = !$('#sheet').hidden;
+    commit((s) => { s.method = method; if (method === 'lmp') s.lmp = value; else s.due = value; }, inSheet ? 'انحفظ التاريخ' : '');
+    if (inSheet) closeSheet();
+    return;
+  }
+  if (f.id === 'pinForm') {
+    const p1 = $('#pin1').value.trim(), p2 = $('#pin2').value.trim();
+    if (!showError('#pinError', !/^\d{4}$/.test(p1) ? 'الرمز لازم يكون 4 أرقام.' : p1 !== p2 ? 'الرمزين مو نفس بعض. اكتبيهم مرة ثانية.' : '')) return;
+    const salt = newId();
+    hashPin(p1, salt).then((hash) => {
+      pinFormOpen = false;
+      commit((s) => { s.pin = { salt, hash }; }, 'انحفظ الرمز. التطبيق بيطلبه كل ما تفتحينه');
+      renderSheet();
+    }).catch(() => showError('#pinError', 'ما قدرنا نحفظ الرمز في هذا المتصفح.'));
+    return;
+  }
+  if (f.id === 'namesForm') {
+    const name = $('#momName').value.trim() || 'عبير';
+    const baby = $('#babyName').value.trim();
+    return commit((s) => { s.name = name; s.baby = baby; }, 'انحفظت الأسماء');
+  }
+  if (f.id === 'apptForm') {
+    const title = $('#apptTitle').value.trim();
+    const date = $('#apptDate').value;
+    if (!showError('#apptError', !title ? 'اكتبي وش الموعد.' : !date ? 'اختاري تاريخ الموعد.' : '')) return;
+    return commit((s) => { s.appts.push({ id: newId(), title, date, time: $('#apptTime').value, note: $('#apptNote').value.trim() }); }, 'انضاف الموعد');
+  }
+  if (f.id === 'weightForm') {
+    const raw = $('#wKg').value.replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('٫', '.').replace(',', '.');
+    const kg = Math.round(parseFloat(raw) * 10) / 10;
+    const date = $('#wDate').value;
+    if (!showError('#weightError', !(kg >= 30 && kg <= 250) ? 'اكتبي الوزن بالكيلو، رقم بين 30 و250.' : !date ? 'اختاري التاريخ.' : '')) return;
+    return commit((s) => { s.weights.push({ id: newId(), date, kg }); }, 'انحفظ الوزن');
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (!$('#lock').hidden) {
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pinPress(e.key); }
+    else if (e.key === 'Backspace') { e.preventDefault(); pinPress('del'); }
+    return;
+  }
+  if (e.key === 'Escape' && !$('#sheet').hidden) closeSheet();
+});
+
+// Lock again when the app comes back after more than a minute away.
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) hiddenAt = Date.now();
+  else if (state.pin && hiddenAt && Date.now() - hiddenAt > 60000) showLock();
+});
+window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
+
+// Live timers, and a redraw when the day changes while the app is open.
+let lastDay = todayISO();
+setInterval(() => {
+  const ks = state.kickSession, kt = $('#kickTimer');
+  if (ks && kt) kt.textContent = mmss(Date.now() - ks.start);
+  const cl = $('#contractLive');
+  if (state.running && cl) cl.textContent = mmss(Date.now() - state.running);
+  if (todayISO() !== lastDay) { lastDay = todayISO(); render(); }
+}, 1000);
+
+// ---------- start ----------
+state = loadLocal() || blank();
+formMethod = journey() ? state.method : 'weeks';
+showLock();
+render();
+connectRemote();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
+</script>
+</body>
+</html>
